@@ -1,0 +1,11 @@
+<document>
+  <properties>
+    <title>Maven ScalaTest Plugin</title>
+  </properties>
+  <body>
+    <release version="1.0" date="${build.timestamp}" description="Initial release">
+      <action dev="teigen" type="add">Created initial version. Jon gets credit for most of the work in this release.</action>
+      <action dev="trenchguinea" type="update">Updated to work with Scala 2.8 and cleaned up for release.</action>
+    </release>
+  </body>
+</document>

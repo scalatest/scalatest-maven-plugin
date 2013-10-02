@@ -1,0 +1,9 @@
+<project name="Maven ScalaTest Plugin">
+  <body>
+    <menu name="Documentation">
+      <item name="Release Notes" href="changes-report.html" />
+      <item name="Usage" href="usage.html" />
+    </menu>
+    <menu ref="reports"/>
+  </body>
+</project>

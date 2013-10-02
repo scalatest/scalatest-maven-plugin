@@ -1,0 +1,176 @@
+Usage Documentation
+
+  Replacing the use of Maven's Surefire plugin with this plugin involves two simple steps:
+
+  [[1]] Disable the maven-surefire-plugin
+
+  [[2]] Configure this maven-scalatest-plugin to run in the test phase
+
+  []
+
+  To replace the maven-surefire-report-plugin with this plugin, simply add the maven-scalatest-plugin instead of
+  the maven-surefire-report-plugin to the reporting section of the POM.
+
+  For example, in the build section of the POM, add something like the following:
+
++--
+<build>
+  ...
+
+  <!-- Disable Surefire -->
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <configuration>
+      <skipTests>true</skipTests>
+    </configuration>
+  </plugin>
+
+  <!-- Enable Scalatest -->
+  <plugin>
+    <groupId>org.scalatest</groupId>
+    <artifactId>maven-scalatest-plugin</artifactId>
+    <executions>
+      <execution>
+        <goals>
+          <goal>test</goal>
+        </goals>
+        <configuration>
+          ...
+        </configuration>
+      </execution>
+    </executions>
+  </plugin>
+
+  ...
+</build>
++--
+
+  The important item in the above POM definition is the \<skipTests\> configuration specified
+  on the maven-surefire-plugin.  There is nothing inherently wrong in having Surefire run your
+  tests, but if you want all your tests to run through ScalaTest instead, then disabling Surefire
+  in this manner will keep your tests from running twice.  Since the "test" goal of the
+  maven-scalatest-plugin is tied to the test phase by default you do not need to do this explicitly
+  in your POM.
+
+  Optionally, in the reporting section of the POM you can add something like the following:
+
++--
+<reporting>
+  ...
+
+  <plugin>
+    <groupId>org.scalatest</groupId>
+    <artifactId>maven-scalatest-plugin</artifactId>
+    <configuration>
+      <fileReporterOptions>...</fileReporterOptions>
+    </configuration>
+  </plugin>
+
+  ...
+</reporting>
++--
+
+  Adding this configuration will tell the plugin's "reporter" goal to execute during
+  site generation.  This goal will run the tests and output the results to an HTML file that
+  will link into the project's site.  ScalaTest does not yet have an HTML Reporter implementation,
+  so this goal will instead embed the plain text output of ScalaTest's FileReporter into a \<pre\>
+  element in a wrapper HTML page with seamless incorporation into Maven's site infrastructure.
+
+  <<Note:>> Adding the reporter goal will, like the default behavior of maven-surefire-report-plugin, cause
+  your tests to run twice: once in the test phase and again in the site phase.  Unlike the maven-surefire-report-plugin,
+  the reporter goal of this plugin <does not> have a "report-only" configuration option to incorporate the test
+  results of the prior run.
+
+* Customizing ScalaTest
+
+  While using this plugin does allow Maven to execute your tests without the need to
+  use the "@RunWith(classOf[JUnitRunner])" boilerplate at the top of every test class, which is certainly
+  an advantage, the main benefit of this plugin is that it allows you to leverage the customization
+  options of ScalaTest's Runner class as part of the standard Maven build.  It is true that through either
+  the exec-maven-plugin or the "run" goal of the maven-scala-plugin you could launch the Runner class
+  with command-line arguments tailored to your preferences, but that approach is not integrated with the
+  Maven lifecycle; it's a <separate> manual step, test failures will not fail your build, and the test results
+  will not be included in your project site.  This plugin addresses those problems.
+
+  The configuration options available to each of the goals are included in the goal documentation, but generally
+  speaking, all or at least most of the command line arguments available on the Runner class are exposed
+  as options on the "test" and "gui" goals.  Creative use of these configuration options can allow you to
+  run your "fast" tests in one Maven profile and your "slow" tests in a different Maven profile or to filter
+  certain suites from the execution.
+
+  For example, let's say that you have some tests tagged with a "Slow" Tag and others tagged with a "Fast" Tag.
+  All the goals in this plugin support the "includes" and "excludes" configuration options, which map to the -n
+  and -l Runner command-line arguments, respectively.  Now let's also say that you want to run your "Fast" tests
+  on every SCM commit while only running the "Slow" tests manually or from a nightly build.  Using Maven profiles,
+  you can configure your POM similar to the following to accomplish this objective:
+
++--
+<build>
+  ...
+  <plugin>
+    <groupId>org.scalatest</groupId>
+    <artifactId>maven-scalatest-plugin</artifactId>
+    <executions>
+      <execution>
+        <goals>
+          <goal>test</goal>
+        </goals>
+        <configuration>
+          <xmlreports>test-results</xmlreports>
+          <excludes>Slow</excludes>
+        </configuration>
+      </execution>
+    </executions>
+  </plugin>
+  ...
+</build>
+...
+<profiles>
+  <profile>
+    <id>nightly-build</id>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.scalatest</groupId>
+          <artifactId>maven-scalatest-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <configuration>
+                <xmlreports>test-results</xmlreports>
+                <!-- Since we have no tags included or excluded all tests will run -->
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
+</profiles>
++--
+
+  The "test" and "gui" goals support multiple Reporters of different types and formatting options for each
+  of those Reporters.  For example, given this elaborate Reporter configuration
+
++--
+<filereports>NCXEHLOWFD test-results/text/constrained.txt,test-results/text/full.txt</filereports>
+<xmlreports>test-results/xml</xmlreports>
++--
+
+  the test results will be written to three locations:
+
+  [[1]] the constrained.txt file in the test-results/text directory with the NCXEHLOWFD Reporting options applied
+
+  [[2]] the full.txt file in the test-results/text directory with no Reporting options applied
+
+  [[3]] the test-results/xml directory as a set of files that adhere to the JUnit XML format
+
+  []
+
+  The "reporter" goal does not support this level of customization, however, because it doesn't really apply.
+  Instead, this goal has a "fileReporterOptions" option that allows you to specify the formatting options to
+  pass to the FileReporter.  The plugin itself controls the name of that file, and the location of the file
+  is configured through the standard "reportOutputDirectory" as is convention in report goals of other plugins.

@@ -1,0 +1,27 @@
+Work done so far
+----------------
+1. Moved code from github to google code under "trenchguinea" branch
+2. Integration tests used to contain a copy of the scalatestexamples from ScalaTest 1.0-snapshot, which didn't compile anymore,
+   so I changed them to auto-export from SCM in the generate-test-sources phase into the target/generated/src/test folder.
+   a. I placed into target so that a clean would be sure to copy down a clean set of the examples
+   b. The way the tests were executed from the Runner wasn't entirely valid to make them pass so fixed them
+3. Did other prep for release like release notes, JavaDoc and Source XRef reports, and the Cobertura code-coverage report
+
+
+To Use
+------
+1. Disable maven-surefire-plugin by setting skipTests=true
+2. Add maven-scalatest-plugin to <build> section and configure the "test" goal in an execution
+3. Execute "test" phase or directly execute the scalatest:test or scalatest:gui goals
+
+
+Future implementation thoughts
+------------------------------
+1. Could actually integrate with Surefire directly by implementing SurefireProvider API
+   a. The current method of disabling surefire to replace with scalatest is a bit of a hack and drops features that surefire would expect
+   b. May allow the surefire-report-plugin "just work", though not sure about this
+   c. This would require a lot of the discovery logic currently in Runner to be externally-consumable so that Surefire can discover the tests
+2. To really be a replacement for surefire we'd need a replacement for the surefire-report-plugin. Users commonly use the surefire output
+   for verifying process compliance.
+   a. We could write a report goal that just dumps the text to a file and links that file into the site but it's far from ideal
+   b. Once the HTML/Flex reporter is available that the report goal executes that reporter (at least by default)
