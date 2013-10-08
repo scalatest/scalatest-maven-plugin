@@ -1,5 +1,29 @@
-scalatest-maven-plugin
+ScalaTest Maven Plugin
 ======================
+
+Building ScalaTest Maven Plugin
+-------------------------------
+
+Maven 3 is used to manage the build process.  To build this plugin, please make sure you have the following installed:-
+
+  * The Git command line tools
+  * A recent JDK (the [current Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) is recommended)
+  * Maven 3 (http://maven.apache.org/download.html)
+
+You then clone and checkout master trunk:-
+
+    $ git clone git://github.com/scalatest/scalatest-maven-plugin.git
+    
+    $ cd scalatest-maven-plugin
+
+Finally use the following commands to build for ScalaTest Maven Plugin: 
+
+    $ mvn clean package
+
+The built output will be available in target/.
+
+Using ScalaTest Maven Plugin
+----------------------------
 
 To use the ScalaTest Maven plugin, you need to disable SureFire and enable ScalaTest. Here's an example of how to do this in your pom.xml: 
 
