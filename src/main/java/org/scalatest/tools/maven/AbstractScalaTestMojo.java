@@ -135,6 +135,20 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     String testNGConfigFiles;
 
     /**
+     * Comma separated list of files to store names of failed and
+     * canceled tests into.
+     * @parameter expression="${memoryFiles}"
+     */
+    String memoryFiles;
+
+    /**
+     * Comma separated list of files to store names of failed and
+     * canceled tests into.
+     * @parameter expression="${testsFiles}"
+     */
+    String testsFiles;
+
+    /**
      * Comma separated list of JUnit suites/tests to execute
      * @parameter expression="${junitClasses}"
      */
@@ -390,6 +404,8 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             addAll(membersOnlySuites());
             addAll(wildcardSuites());
             addAll(testNGConfigFiles());
+            addAll(memoryFiles());
+            addAll(testsFiles());
             addAll(junitClasses());
         }};
     }
@@ -530,6 +546,14 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
     private List<String> testNGConfigFiles() {
         return suiteArg("-t", testNGConfigFiles);
+    }
+
+    private List<String> memoryFiles() {
+        return suiteArg("-M", memoryFiles);
+    }
+
+    private List<String> testsFiles() {
+        return suiteArg("-A", testsFiles);
     }
 
     private List<String> junitClasses() {
