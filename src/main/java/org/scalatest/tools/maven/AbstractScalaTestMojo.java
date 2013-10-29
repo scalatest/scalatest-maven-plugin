@@ -553,7 +553,15 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> testsFiles() {
-        return suiteArg("-A", testsFiles);
+        List<String> list = new ArrayList<String>();
+        for (String param : splitOnComma(testsFiles)) {
+            File file = new File(param);
+            if (file.exists()) {
+                list.add("-A");
+                list.add(param);
+            }
+        }
+        return list;
     }
 
     private List<String> junitClasses() {
