@@ -11,13 +11,14 @@
   <groupId>org.scalatest</groupId>
   <artifactId>scalatest-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>1.0</version>
+  <version>1.0-RC3</version>
   <name>ScalaTest Maven Plugin</name>
   <description>Integrates ScalaTest into Maven</description>
 
   <properties>
-    <scala.version>2.9.0</scala.version>
-    <scalatest.version>2.0.M5</scalatest.version>
+    <scala.version>2.10.0</scala.version>
+    <deploy.scala.version>2.10</deploy.scala.version>
+    <scalatest.version>2.0</scalatest.version>
     <maven.scala.plugin.version>2.14.1</maven.scala.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -49,6 +50,18 @@
       <name>Sean Griffin</name>
       <email>trenchguinea@gmail.com</email>
     </developer>
+    <developer>
+      <id>gcberger</id>
+      <name>George Berger</name>
+    </developer>
+    <developer>
+      <id>cheeseng</id>
+      <name>Chua Chee Seng</name>
+    </developer>
+    <developer>
+      <id>bvenners</id>
+      <name>Bill Venners</name>
+    </developer>
   </developers>
 
   <dependencies>
@@ -79,7 +92,7 @@
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.version}</artifactId>
+      <artifactId>scalatest_${deploy.scala.version}</artifactId>
       <version>${scalatest.version}</version>
       <scope>test</scope>
     </dependency>
