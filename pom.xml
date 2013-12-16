@@ -11,7 +11,7 @@
   <groupId>org.scalatest</groupId>
   <artifactId>scalatest-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>1.0-M4-SNAPSHOT</version>
+  <version>1.0-RC1</version>
   <name>ScalaTest Maven Plugin</name>
   <description>Integrates ScalaTest into Maven</description>
 
@@ -175,6 +175,20 @@
             <goal>site</goal>
           </goals>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
