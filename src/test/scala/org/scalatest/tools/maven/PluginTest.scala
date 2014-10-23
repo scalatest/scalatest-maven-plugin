@@ -164,7 +164,7 @@ class PluginTest extends JUnit3Suite with ShouldMatchers with PluginMatchers wit
   }
 
   def testTestNGs {
-    configure(_.testNGConfigFiles = comma("a", "b", "c")) should containSuiteArgs("-t", "a", "b", "c")
+    configure(_.testNGConfigFiles = comma("a", "b", "c")) should containSuiteArgs("-b", "a", "b", "c")
   }
 
   def testJUnits {
