@@ -434,7 +434,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> parallel() {
-        return parallel ? singletonList("-c") : Collections.<String>emptyList();
+        return parallel ? singletonList("-P") : Collections.<String>emptyList();
     }
 
     //
@@ -545,7 +545,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> testNGConfigFiles() {
-        return suiteArg("-t", testNGConfigFiles);
+        return suiteArg("-b", testNGConfigFiles);
     }
 
     private List<String> memoryFiles() {
