@@ -1,8 +1,33 @@
 package org.scalatest.tools.maven;
 
+import static java.util.Collections.singletonList;
+import static org.scalatest.tools.maven.MojoUtils.compoundArg;
+import static org.scalatest.tools.maven.MojoUtils.splitOnComma;
+import static org.scalatest.tools.maven.MojoUtils.suiteArg;
+
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -10,23 +35,6 @@ import org.codehaus.plexus.util.cli.CommandLineTimeOutException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
-
-import static org.scalatest.tools.maven.MojoUtils.*;
-
-import java.io.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-
-import static java.util.Collections.singletonList;
-
-import java.net.MalformedURLException;
-import java.net.URLClassLoader;
-import java.net.URL;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * Provides the base for all mojos.
@@ -227,6 +235,48 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
      */
     boolean logForkedProcessCommand;
 
+    /**
+     * Injected by Maven to obtainer the classpath.  Should not be user facing.
+     * @parameter expression="${plugin.artifactMap}"
+     * @required
+     * @readOnly
+     */
+    private Map<String, Artifact> pluginArtifactMap;
+
+    /**
+     * ArtifactRepository of the localRepository. To obtain the directory of localRepository in unit tests use
+     * System.getProperty("localRepository").
+     *
+     * @parameter default-value="${localRepository}"
+     * @required
+     * @readonly
+     */
+    private ArtifactRepository localRepository;
+
+    /**
+     * The remote plugin repositories declared in the POM.
+     *
+     * @parameter default-value="${project.pluginArtifactRepositories}"
+     * @since 2.2
+     */
+    private List<ArtifactRepository> remoteRepositories;
+
+    /**
+     * @component
+     */
+    private ArtifactResolver artifactResolver;
+
+    /**
+     * Creates the artifact.
+     * @component
+     */
+    private ArtifactFactory artifactFactory;
+
+    /**
+     * For retrieval of artifact's metadata.
+     * @component
+     */
+    private ArtifactMetadataSource metadataSource;
 
     // runScalaTest is called by the concrete mojo subclasses  TODO: make it protected and others too
     // Returns true if all tests pass
@@ -375,12 +425,53 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         }
     }
 
+    private String getArtifactPath(Artifact artifact) {
+        if (artifact != null) {
+            getLog().debug("Found artifact : " + artifact);
+
+            File file = artifact.getFile();
+            if (file != null) {
+                String path = file.getPath();
+                getLog().debug("adding path : " + path);
+                return path;
+            }
+        }
+        return null;
+    }
+
+    private List<String> getPegdownDependencies() {
+        List<String> dependencies = new ArrayList<String>();
+        Artifact pegdown = pluginArtifactMap.get("org.pegdown:pegdown");
+        if (pegdown != null) {
+
+            dependencies.add(getArtifactPath(pegdown));
+
+            Artifact originatingArtifact = artifactFactory.createBuildArtifact("dummy", "dummy", "1.0", "jar");
+            try {
+                ArtifactResolutionResult result = artifactResolver.resolveTransitively(Collections.singleton(pegdown), originatingArtifact, localRepository,
+                        remoteRepositories, metadataSource, null);
+                Set<Artifact> artifacts = result.getArtifacts();
+                for (Artifact a : artifacts) {
+                    dependencies.add(getArtifactPath(a));
+                }
+            } catch (ArtifactResolutionException e) {
+                throw new IllegalStateException("Dependency resolution failed for plugin dependencies.", e);
+            } catch (ArtifactNotFoundException e) {
+                throw new IllegalStateException("Dependency resolution failed for plugin dependencies.", e);
+            }
+        }
+        return dependencies;
+    }
+
     // Have to use the programmatic way of getting the classpath elements
     // instead of the field-level injection since that apparently doesn't work
     // for ReporterMojos in maven-2.2 (it does work in maven-3)
     private List<String> testClasspathElements() {
+        List<String> dependencies = getPegdownDependencies();
+
         try {
-            return (List<String>) project.getTestClasspathElements();
+            dependencies.addAll((List<String>)project.getTestClasspathElements());
+            return dependencies;
         }
         catch (DependencyResolutionRequiredException e) {
             // There's really no known way this exception can happen since
