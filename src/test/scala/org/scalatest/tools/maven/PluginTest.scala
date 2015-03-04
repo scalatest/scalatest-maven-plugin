@@ -171,6 +171,10 @@ class PluginTest extends JUnit3Suite with ShouldMatchers with PluginMatchers wit
     configure(_.jUnitClasses = comma("a", "b", "c")) should containSuiteArgs("-j", "a", "b", "c")
   }
 
+  def testScaledTimeSpans {
+    configure(_.spanScaleFactor = 2.5) should containSlice("-F", "2.5")
+  }
+
   def testMojoConcat {
     MojoUtils.concat(jlist("a", "b", "c"), jlist("1", "2", "3")) should be(Array("a", "b", "c", "1", "2", "3"))
   }
