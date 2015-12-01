@@ -107,8 +107,8 @@ final class PluginTest
   }
 
   def testConcurrent {
-    configure(_.parallel = true) should contain("-c")
-    configure(_.parallel = false) should not contain ("-c")
+    configure(_.parallel = true) should contain("-P")
+    configure(_.parallel = false) should not contain ("-P")
   }
 
   def testSuites {

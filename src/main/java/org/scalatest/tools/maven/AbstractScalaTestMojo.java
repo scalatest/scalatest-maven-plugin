@@ -441,7 +441,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> parallel() {
-        return parallel ? singletonList("-c") : Collections.<String>emptyList();
+        return parallel ? singletonList("-P") : Collections.<String>emptyList();
     }
 
     //
