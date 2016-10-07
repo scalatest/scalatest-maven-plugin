@@ -28,7 +28,7 @@ public class ReporterMojo extends AbstractScalaTestMojo implements MavenReport {
     /**
      * Directory where reports will go.
      *
-     * @parameter expression="${project.reporting.outputDirectory}"
+     * @parameter property="project.reporting.outputDirectory"
      * @required
      * @readonly
      */
@@ -37,7 +37,7 @@ public class ReporterMojo extends AbstractScalaTestMojo implements MavenReport {
     /**
      * Consists of an optional configuration parameters for the file reporter.
      * For more info on configuring reporters, see the ScalaTest documentation.
-     * @parameter expression="${fileReporterOptions}"
+     * @parameter property="fileReporterOptions"
      */
     private String fileReporterOptions;
 

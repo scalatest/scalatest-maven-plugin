@@ -50,7 +50,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
     /**
      * Injected by Maven so that it can be included in the run path.  Should not be user facing.
-     * @parameter expression="${project.build.testOutputDirectory}"
+     * @parameter property="project.build.testOutputDirectory"
      * @required
      * @readOnly
      */
@@ -58,7 +58,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
     /**
      * Injected by Maven so that it can be included in the run path.  Should not be user facing.
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter property="project.build.outputDirectory"
      * @required
      * @readOnly
      */
@@ -68,89 +68,89 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
      * Comma separated list of additional elements to be added
      * to the ScalaTest runpath. <code>${project.build.outputDirectory}</code> and
      * <code>${project.build.testOutputDirectory}</code> are included by default
-     * @parameter expression="${runpath}"
+     * @parameter property="runpath"
      */
     String runpath;
 
     /**
      * Comma separated list of suites to be executed.
-     * @parameter expression="${suites}"
+     * @parameter property="suites"
      */
     String suites;
 
     /**
      * Comma separated list of tests to be executed
-     * @parameter expression="${tests}"
+     * @parameter property="tests"
      */
     String tests;
 
     /**
      * Regex of suffixes to filter discovered suites
-     * @parameter expression="${suffixes}"
+     * @parameter property="suffixes"
      */
     String suffixes;
 
     /**
      * Comma separated list of tags to include
-     * @parameter expression="${tagsToInclude}"
+     * @parameter property="tagsToInclude"
      */
     String tagsToInclude;
 
     /**
      * Comma separated list of tags to exclude
-     * @parameter expression="${tagsToExclude}"
+     * @parameter property="tagsToExclude"
      */
     String tagsToExclude;
 
     /**
      * Comma separated list of configuration parameters to pass to ScalaTest.
      * The parameters must be of the format &lt;key&gt;=&lt;value&gt;. E.g <code>foo=bar,monkey=donkey</code>
-     * @parameter expression="${config}"
+     * @parameter property="config"
      */
     String config;
 
     /**
      * Set to true to run suites concurrently
-     * @parameter expression="${parallel}"
+     * @parameter property="parallel"
      */
     boolean parallel;
 
     /**
      * Comma separated list of packages containing suites to execute
-     * @parameter expression="${membersOnlySuites}"
+     * @parameter property="membersOnlySuites"
      */
     String membersOnlySuites;
 
 // TODO: Change this to wildcard and membersOnly
     /**
      * Comma separated list of wildcard suite names to execute
-     * @parameter expression="${wildcardSuites}"
+     * @parameter property="wildcardSuites"
      */
     String wildcardSuites;
 
     /**
      * Comma separated list of testNG xml files to execute
-     * @parameter expression="${testNGXMLFiles}"
+     * @parameter property="testNGXMLFiles"
      */
     String testNGConfigFiles;
 
     /**
      * Comma separated list of files to store names of failed and
      * canceled tests into.
-     * @parameter expression="${memoryFiles}"
+     * @parameter property="memoryFiles"
      */
     String memoryFiles;
 
     /**
      * Comma separated list of files to store names of failed and
      * canceled tests into.
-     * @parameter expression="${testsFiles}"
+     * @parameter property="testsFiles"
      */
     String testsFiles;
 
     /**
      * Comma separated list of JUnit suites/tests to execute
-     * @parameter expression="${junitClasses}"
+     * @parameter property="junitClasses"
      */
     String jUnitClasses;
 
@@ -158,14 +158,14 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
      * Option to specify the forking mode. Can be "never" or "once". "always", which would
      * fork for each test-class, may be supported later.
      *
-     * @parameter expression="${forkMode}" default-value="once"
+     * @parameter property="forkMode" default-value="once"
      */
     String forkMode;
 
     /**
      * Option to specify additional JVM options to pass to the forked process.
      *
-     * @parameter expression="${argLine}"
+     * @parameter property="argLine"
      */
     String argLine;
 
@@ -189,7 +189,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
      * <p>If set to <code>true</code>, the forked process will suspend at startup and wait for a remote
      * debugger to attach to the configured port.</p>
      *
-     * @parameter expression="${debugForkedProcess}" default-value="false"
+     * @parameter property="debugForkedProcess" default-value="false"
      */
     boolean debugForkedProcess;
 
@@ -200,14 +200,14 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
      * This allows customization of how remote debugging is done, without having to reconfigure the JVM
      * options in <code>argLine</code>.
      *
-     * @parameter expression="${debugArgLine}"
+     * @parameter property="debugArgLine"
      */
     String debugArgLine;
 
     /**
      * Port to listen on when debugging the forked process.
      *
-     * @parameter expression="${debuggerPort}" default-value="5005"
+     * @parameter property="debuggerPort" default-value="5005"
      */
     int debuggerPort = 5005;
 
@@ -216,14 +216,14 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
      *
      * <p>If set to 0, process never times out.</p>
      *
-     * @parameter expression="${timeout}" default-value="0"
+     * @parameter property="timeout" default-value="0"
      */
     int forkedProcessTimeoutInSeconds = 0;
 
     /**
      * Whether or not to log the command used to launch the forked process.
      *
-     * @parameter expression="${logForkedProcessCommand}" default-value="false"
+     * @parameter property="logForkedProcessCommand" default-value="false"
      */
     boolean logForkedProcessCommand;
 
@@ -568,4 +568,3 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         return suiteArg("-j", jUnitClasses);
     }
 }
-
