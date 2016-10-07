@@ -5,25 +5,29 @@
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
-    <version>7</version>
+    <version>9</version>
   </parent>
 
   <groupId>org.scalatest</groupId>
   <artifactId>scalatest-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>1.0</version>
+  <version>1.1.0-SNAPSHOT</version>
   <name>ScalaTest Maven Plugin</name>
   <description>Integrates ScalaTest into Maven</description>
 
   <properties>
-    <scala.version>2.10.0</scala.version>
-    <deploy.scala.version>2.10</deploy.scala.version>
-    <scalatest.version>2.0</scalatest.version>
+    <scala.major.version>2.11</scala.major.version>
+    <scala.minor.version>8</scala.minor.version>
+    <scala.version>${scala.major.version}.${scala.minor.version}</scala.version>
+    <deploy.scala.version>2.11</deploy.scala.version>
+    <scalatest.version>2.2.6</scalatest.version>
     <maven.scala.plugin.version>2.14.1</maven.scala.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <build.timestamp>${maven.build.timestamp}</build.timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+    <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
+    <maven.project.info.reports.plugin.version>2.9</maven.project.info.reports.plugin.version>
   </properties>
 
   <licenses>
@@ -99,7 +103,7 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
-      <version>${scala.version}</version>
+      <version>${scala.major.version}.${scala.minor.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -118,7 +122,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>2.3</version>
+          <version>3.5.1</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -135,6 +139,9 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <scalaVersion>${scala.major.version}.${scala.minor.version}</scalaVersion>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -172,7 +179,6 @@
           <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
           <pomIncludes>
             <pomInclude>lift/pom.xml</pomInclude>
-            <pomInclude>scalatestexamples/pom.xml</pomInclude>
           </pomIncludes>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <streamLogs>true</streamLogs>
@@ -193,6 +199,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
+        <version>${maven.gpg.plugin.version}</version>
         <executions>
           <execution>
             <id>sign-artifacts</id>
@@ -276,7 +283,7 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-site-plugin</artifactId>
-              <version>3.0</version>
+              <version>3.5-1</version>
             </plugin>
           </plugins>
         </pluginManagement>

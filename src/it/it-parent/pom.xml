@@ -22,11 +22,29 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-site-plugin</artifactId>
-              <version>3.0</version>
+              <version>3.5.1</version>
             </plugin>
           </plugins>
         </pluginManagement>
       </build>
     </profile>
   </profiles>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.scalatest</groupId>
+          <artifactId>scalatest-maven-plugin</artifactId>
+          <version>@project.version@</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>@maven.project.info.reports.plugin.version@</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
 </project>

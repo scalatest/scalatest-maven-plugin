@@ -7,9 +7,9 @@
   <packaging>war</packaging>
   <name>lift-it</name>
   <description>Runs the plugin against a basic Lift application.</description>
-  
+
   <properties>
-    <lift.version>2.4</lift.version>
+    <lift.version>2.6.3</lift.version>
   </properties>
 
   <parent>
@@ -23,21 +23,21 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
-      <version>${scala.version}</version>
+      <version>@scala.version@</version>
     </dependency>
     <dependency>
       <groupId>net.liftweb</groupId>
-      <artifactId>lift-util_${scala.version}</artifactId>
+      <artifactId>lift-util_@scala.major.version@</artifactId>
       <version>${lift.version}</version>
     </dependency>
     <dependency>
       <groupId>net.liftweb</groupId>
-      <artifactId>lift-webkit_${scala.version}</artifactId>
+      <artifactId>lift-webkit_@scala.major.version@</artifactId>
       <version>${lift.version}</version>
     </dependency>
     <dependency>
       <groupId>net.liftweb</groupId>
-      <artifactId>lift-mapper_${scala.version}</artifactId>
+      <artifactId>lift-mapper_@scala.major.version@</artifactId>
       <version>${lift.version}</version>
     </dependency>
     <dependency>
@@ -48,8 +48,8 @@
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.version}</artifactId>
-      <version>${scalatest.version}</version>
+      <artifactId>scalatest_2.11</artifactId>
+      <version>@scalatest.version@</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -62,7 +62,7 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-compiler</artifactId>
-      <version>${scala.version}</version>
+      <version>@scala.version@</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -74,7 +74,7 @@
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
-        <version>${maven.scala.plugin.version}</version>
+        <version>@maven.scala.plugin.version@</version>
         <executions>
           <execution>
             <goals>
@@ -84,7 +84,7 @@
           </execution>
         </executions>
         <configuration>
-          <scalaVersion>${scala.version}</scalaVersion>
+          <scalaVersion>@scala.version@</scalaVersion>
         </configuration>
       </plugin>
       <plugin>
