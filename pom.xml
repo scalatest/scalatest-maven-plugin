@@ -8,7 +8,7 @@
     <version>7</version>
   </parent>
 
-  <groupId>org.scalatest</groupId>
+  <groupId>com.expedia</groupId>
   <artifactId>scalatest-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <version>1.0</version>
@@ -16,8 +16,8 @@
   <description>Integrates ScalaTest into Maven</description>
 
   <properties>
-    <scala.version>2.10.0</scala.version>
-    <deploy.scala.version>2.10</deploy.scala.version>
+    <scala.version>2.12.1</scala.version>
+    <deploy.scala.version>2.12</deploy.scala.version>
     <scalatest.version>2.0</scalatest.version>
     <maven.scala.plugin.version>2.14.1</maven.scala.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
