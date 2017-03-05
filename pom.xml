@@ -2,17 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
-    </parent>
-
     <groupId>org.scalatest</groupId>
     <artifactId>scalatest-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.0</version>
+    <version>1.1.0-SNAPSHOT</version>
     <name>ScalaTest Maven Plugin</name>
     <description>Integrates ScalaTest into Maven</description>
 
@@ -20,7 +13,7 @@
         <scala.version>2.10.6</scala.version>
         <deploy.scala.version>2.10</deploy.scala.version>
 
-        <scalatest.version>2.2.5</scalatest.version>
+        <scalatest.version>3.0.1</scalatest.version>
         <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
 
         <java.version>1.8</java.version>
@@ -37,12 +30,6 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
-    <scm>
-        <url>https://github.com/scalatest/scalatest-maven-plugin</url>
-        <connection>scm:git:git@github.com:scalatest/scalatest-maven-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:scalatest/scalatest-maven-plugin.git</developerConnection>
-    </scm>
 
     <developers>
         <developer>
@@ -154,8 +141,9 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.10.4</version>
                     <configuration>
+                        <additionalparam>-Xdoclint:none</additionalparam>
                         <charset>${project.build.sourceEncoding}</charset>
                         <docencoding>${project.build.sourceEncoding}</docencoding>
                         <docfilessubdirs>true</docfilessubdirs>
@@ -232,6 +220,7 @@
                 </configuration>
             </plugin>
 
+            <!--
             <plugin>
                 <artifactId>maven-invoker-plugin</artifactId>
                 <version>2.0.0</version>
@@ -285,6 +274,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>
     </build>
 

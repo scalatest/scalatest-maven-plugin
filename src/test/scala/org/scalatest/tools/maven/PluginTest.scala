@@ -7,8 +7,8 @@ import org.scalatest.junit.JUnit3Suite
 import org.scalatest.{BeforeAndAfterAll, Matchers}
 
 /**
- * @author Jon -Anders Teigen
- */
+  * @author Jon -Anders Teigen
+  */
 class PluginTest extends JUnit3Suite with Matchers with PluginMatchers with BeforeAndAfterAll {
   val tmpDir = new File(System.getProperty("java.io.tmpdir"))
   val reportsDirectory = new File(tmpDir, "reportsDirectory")
@@ -25,11 +25,14 @@ class PluginTest extends JUnit3Suite with Matchers with PluginMatchers with Befo
           delete(d)
       }
     }
+
     delete(reportsDirectory)
     delete(baseDir);
   }
 
-  def jlist(a: String*) = new ArrayList[String]() {for (e <- a) this.add(e)}
+  def jlist(a: String*) = new ArrayList[String]() {
+    for (e <- a) this.add(e)
+  }
 
   def comma(a: String*) = a mkString ","
 
@@ -71,7 +74,7 @@ class PluginTest extends JUnit3Suite with Matchers with PluginMatchers with Befo
 
     config should containSlice("-h", "target/htmldir")
     config should containSlice("-h", "target/myhtmldir",
-                               "-Y", "src/resources/my.css")
+      "-Y", "src/resources/my.css")
   }
 
   def testReporters {
@@ -109,32 +112,34 @@ class PluginTest extends JUnit3Suite with Matchers with PluginMatchers with Befo
 
   def testSuites {
     val suites: String = comma(" a ",
-                               "b",
-                               "foo @bar baz",
-                               " zowie\n  zip zap ")
+      "b",
+      "foo @bar baz",
+      " zowie\n  zip zap ")
 
     val config = configure(_.suites = suites)
 
-    config should containSlice ("-s", "a")
-    config should containSlice ("-s", "b")
-    config should containSlice ("-s", "foo", "-t", "bar baz")
-    config should containSlice ("-s", "zowie", "-z", "zip zap")
+    config should containSlice("-s", "a")
+    config should containSlice("-s", "b")
+    config should containSlice("-s", "foo", "-t", "bar baz")
+    config should containSlice("-s", "zowie", "-z", "zip zap")
   }
 
   def testSuitesAndTests {
     val suites: String = comma(" a ", "b c")
-    val tests:  String = comma(" d ", "@e")
+    val tests: String = comma(" d ", "@e")
 
-    val config = configure(x => {x.suites = suites; x.tests = tests})
+    val config = configure(x => {
+      x.suites = suites; x.tests = tests
+    })
 
-    config should containSlice ("-z", "d",
-                                "-t", "e",
-                                "-s", "a",
-                                "-s", "b", "-z", "c")
+    config should containSlice("-z", "d",
+      "-t", "e",
+      "-s", "a",
+      "-s", "b", "-z", "c")
   }
 
   def testTests {
-    val tests: String= comma(" @a ", " b ", "@c")
+    val tests: String = comma(" @a ", " b ", "@c")
 
     val config = configure(_.tests = tests)
 

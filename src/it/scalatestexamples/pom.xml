@@ -80,7 +80,9 @@
                             <goal>export</goal>
                         </goals>
                         <configuration>
-                            <connectionUrl>scm:svn:http://scalatest.googlecode.com/svn/tags/release-2.0.M5-for-scala-2.9/src/examples</connectionUrl>
+                            <connectionUrl>
+                                scm:svn:http://scalatest.googlecode.com/svn/tags/release-2.0.M5-for-scala-2.9/src/examples
+                            </connectionUrl>
                             <exportDirectory>${project.build.directory}/generated/src/test</exportDirectory>
                             <excludes>scala/org/scalatestexamples/fixture/MultiFixtureFunSuite.scala</excludes>
                         </configuration>

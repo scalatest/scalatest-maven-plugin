@@ -1,6 +1,4 @@
-import _root_.org.mortbay.jetty.Connector
-import _root_.org.mortbay.jetty.Server
-import _root_.org.mortbay.jetty.webapp.WebAppContext
+
 
 object RunWebApp extends Application {
   val server = new Server(8080)
@@ -20,7 +18,7 @@ object RunWebApp extends Application {
     server.stop()
     server.join()
   } catch {
-    case exc : Exception => {
+    case exc: Exception => {
       exc.printStackTrace()
       System.exit(100)
     }

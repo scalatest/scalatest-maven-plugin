@@ -1,13 +1,12 @@
 package org.scalatest.tools.maven;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Provides internal utilities for the Mojo's operations.
- * 
+ *
  * @author Jon-Anders Teigen
  */
 final class MojoUtils {
@@ -35,9 +34,9 @@ final class MojoUtils {
         };
     }
 
-    static F dirRelativeTo(final File relative){
-        return new F(){
-            public String f(String in){
+    static F dirRelativeTo(final File relative) {
+        return new F() {
+            public String f(String in) {
                 File dir = new File(relative, in);
                 createIfNotExists(dir); // sideeffect!
                 return dir.getAbsolutePath();
@@ -47,15 +46,15 @@ final class MojoUtils {
 
     // sideeffect!
     private static void createIfNotExists(File dir) {
-        if(!dir.exists() && !dir.mkdirs()){
+        if (!dir.exists() && !dir.mkdirs()) {
             throw new IllegalStateException("Cannot create directory " + dir);
         }
     }
 
-    static List<String> compoundArg(String name, String...strings){
+    static List<String> compoundArg(String name, String... strings) {
         List<String> list = new ArrayList<String>();
         List<String> params = new ArrayList<String>();
-        for(String commaSeparated : strings){
+        for (String commaSeparated : strings) {
             params.addAll(splitOnComma(commaSeparated));
         }
         if (params.size() > 0) {
@@ -114,9 +113,9 @@ final class MojoUtils {
         }
     }
 
-    static String[] concat(List<String>...lists){
+    static String[] concat(List<String>... lists) {
         List<String> c = new ArrayList<String>();
-        for(List<String> l : lists){
+        for (List<String> l : lists) {
             c.addAll(l);
         }
         return c.toArray(new String[c.size()]);

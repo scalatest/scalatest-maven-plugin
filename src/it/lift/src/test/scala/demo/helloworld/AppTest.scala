@@ -1,34 +1,30 @@
 package demo.helloworld
 
 import _root_.java.io.File
-import _root_.org.scalatest.FunSuite
-import _root_.scala.xml.XML
-import _root_.net.liftweb.common.Full
-import _root_.net.liftweb.util.PCDataXmlParser
 
 /**
- * Unit test for simple App.
- */
+  * Unit test for simple App.
+  */
 class AppTest extends FunSuite {
 
   /**
-   * Rigourous Tests :-)
-   */
-  test("OK"){
-     assert(true === true)
+    * Rigourous Tests :-)
+    */
+  test("OK") {
+    assert(true === true)
   }
 
-  ignore("KO"){
+  ignore("KO") {
     assert(true === false)
   }
 
   /**
-   * Tests to make sure the project's XML files are well-formed.
-   *
-   * Finds every *.html and *.xml file in src/main/webapp (and its
-   * subdirectories) and tests to make sure they are well-formed.
-   */
-  test("xml"){
+    * Tests to make sure the project's XML files are well-formed.
+    *
+    * Finds every *.html and *.xml file in src/main/webapp (and its
+    * subdirectories) and tests to make sure they are well-formed.
+    */
+  test("xml") {
     var failed: List[File] = Nil
 
     def handledXml(file: String) =
