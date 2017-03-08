@@ -2,19 +2,20 @@ package org.scalatest.tools.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import static org.scalatest.tools.maven.MojoUtils.*;
 
 import java.io.File;
-import java.util.Collections;
-import static java.util.Collections.singletonList;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+import static org.scalatest.tools.maven.MojoUtils.*;
 
 /**
  * Provides a bridge between Maven and the command-line form of ScalaTest's Runner.
  * Many of the configuration options available on this goal
  * are directly reflected in the Runner ScalaDoc on http://www.scalatest.org.
- * 
+ *
  * @author Sean Griffin
  * @author Mike Pilquist
  * @author Jon-Anders Teigen
@@ -26,6 +27,7 @@ public class TestMojo extends AbstractScalaTestMojo {
 
     /**
      * Output directory in which ScalaTest file reports should be written to.  Passed to ScalaTest via the -f argument.
+     *
      * @parameter expression="${project.build.directory}/scalatest-reports"
      * @required
      */
@@ -33,12 +35,14 @@ public class TestMojo extends AbstractScalaTestMojo {
 
     /**
      * Set to true to skip execution of tests.
+     *
      * @parameter expression="${skipTests}"
      */
     boolean skipTests;
 
     /**
      * Set to true to avoid failing the build when tests fail
+     *
      * @parameter expression="${maven.test.failure.ignore}"
      */
     boolean testFailureIgnore;
@@ -47,6 +51,7 @@ public class TestMojo extends AbstractScalaTestMojo {
      * Comma separated list of filereporters. A filereporter consists of an optional
      * configuration and a mandatory filename, separated by a whitespace. E.g <code>all.txt,XE ignored_and_pending.txt</code>
      * For more info on configuring reporters, see the scalatest documentation.
+     *
      * @parameter expression="${filereports}"
      */
     String filereports;
@@ -56,12 +61,13 @@ public class TestMojo extends AbstractScalaTestMojo {
      * consists of a mandatory directory and an optional css file
      * name, separated by whitespace. E.g:
      * <code>
-     *   &lt;htmlreporters&gt;
-     *     target/htmldir,
-     *     target/myhtmldir src/my.css
-     *   &lt;/htmlreporters&gt;
+     * &lt;htmlreporters&gt;
+     * target/htmldir,
+     * target/myhtmldir src/my.css
+     * &lt;/htmlreporters&gt;
      * </code>
      * For more info on configuring reporters, see the scalatest documentation.
+     *
      * @parameter expression="${htmlreporters}"
      */
     String htmlreporters;
@@ -72,6 +78,7 @@ public class TestMojo extends AbstractScalaTestMojo {
      * must be the fully qualified name of a class extending <code>org.scalatest.Reporter</code>
      * E.g <code>C my.SuccessReporter,my.EverythingReporter</code>
      * For more info on configuring reporters, see the ScalaTest documentation.
+     *
      * @parameter expression="${reporters}"
      */
     String reporters;
@@ -80,6 +87,7 @@ public class TestMojo extends AbstractScalaTestMojo {
      * Comma separated list of junitxml. A junitxml consists of an optional configuration
      * and a mandatory directory for the xml files, separated by whitespace.
      * For more info on configuring reporters, see the scalatest documentation.
+     *
      * @parameter expression="${junitxml}"
      */
     String junitxml;
@@ -87,6 +95,7 @@ public class TestMojo extends AbstractScalaTestMojo {
     /**
      * Configuration for logging to stdout. (This logger is always enabled)
      * For more info on configuring reporters, see the scalatest documentation.
+     *
      * @parameter expression="${stdout}"
      */
     String stdout;
@@ -95,6 +104,7 @@ public class TestMojo extends AbstractScalaTestMojo {
      * Configuration for logging to stderr. It is disabled by default, but will be enabled
      * when configured. Empty configuration just means enable.
      * For more info on configuring reporters, see the scalatest documentation.
+     *
      * @parameter expression="${stderr}"
      */
     String stderr;
@@ -136,7 +146,7 @@ public class TestMojo extends AbstractScalaTestMojo {
     }
 
     private List<String> htmlreporters() {
-        List<String> r = new ArrayList<String>();
+        List<String> r = new ArrayList<>();
 
         for (String arg : splitOnComma(htmlreporters)) {
             String[] split = arg.split("\\s+");
@@ -158,7 +168,7 @@ public class TestMojo extends AbstractScalaTestMojo {
         return reporterArg("-C", reporters, passThrough);
     }
 
-    private List<String> junitxml(){
+    private List<String> junitxml() {
         return reporterArg("-u", junitxml, dirRelativeTo(reportsDirectory));
     }
 }

@@ -1,10 +1,10 @@
 package org.scalatest.tools.maven;
 
-import org.codehaus.doxia.sink.Sink;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.doxia.sink.Sink;
 
 import java.io.*;
 import java.util.List;
@@ -37,6 +37,7 @@ public class ReporterMojo extends AbstractScalaTestMojo implements MavenReport {
     /**
      * Consists of an optional configuration parameters for the file reporter.
      * For more info on configuring reporters, see the ScalaTest documentation.
+     *
      * @parameter expression="${fileReporterOptions}"
      */
     private String fileReporterOptions;
@@ -48,11 +49,7 @@ public class ReporterMojo extends AbstractScalaTestMojo implements MavenReport {
     public void generate(Sink sink, Locale locale) throws MavenReportException {
         try {
             runScalaTest(configuration());
-        }
-        catch (MojoFailureException e) {
-            throw new MavenReportException("Failure executing ScalaTest", e);
-        }
-        catch (RuntimeException e) {
+        } catch (MojoFailureException e) {
             throw new MavenReportException("Failure executing ScalaTest", e);
         }
 
@@ -77,8 +74,7 @@ public class ReporterMojo extends AbstractScalaTestMojo implements MavenReport {
 
             sink.flush();
             sink.close();
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
             throw new MavenReportException("Failure generating ScalaTest report", ioe);
         }
     }
@@ -107,18 +103,17 @@ public class ReporterMojo extends AbstractScalaTestMojo implements MavenReport {
         BufferedReader reader = new BufferedReader(new FileReader(outputFile));
 
         try {
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 writer.println(line);
             }
             return fileContents.toString();
-        }
-        finally {
+        } finally {
             try {
                 reader.close();
                 outputFile.delete();
+            } catch (IOException ignored) {
             }
-            catch (IOException ignored) {}
         }
     }
 

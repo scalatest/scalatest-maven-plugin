@@ -27,20 +27,22 @@ Using ScalaTest Maven Plugin
 
 To use the ScalaTest Maven plugin, you need to disable SureFire and enable ScalaTest. Here's an example of how to do this in your pom.xml: 
 
+```xml
     <!-- disable surefire -- >
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-surefire-plugin</artifactId>
-      <version>2.7</version>
+      <version>2.19.1</version>
       <configuration>
         <skipTests>true</skipTests>
       </configuration>
     </plugin>
+    
     <!-- enable scalatest -- >
     <plugin>
       <groupId>org.scalatest</groupId>
       <artifactId>maven-scalatest-plugin</artifactId>
-      <version>1.0.M2</version>
+      <version>1.1.1</version>
       <configuration>
         <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
         <junitxml>.</junitxml>
@@ -55,3 +57,37 @@ To use the ScalaTest Maven plugin, you need to disable SureFire and enable Scala
         </execution>
       </executions>
     </plugin>
+    
+    <!-- Enable scalatest with suffixes -- >
+    <plugin>
+    <groupId>org.scalatest</groupId>
+    <artifactId>scalatest-maven-plugin</artifactId>
+    <version>1.1.1</version>
+    <configuration>
+        <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+        <junitxml>.</junitxml>
+        <filereports>WDF TestSuite.txt</filereports>
+    </configuration>
+    <executions>
+        <execution>
+            <id>test</id>
+            <goals>
+                <goal>test</goal>
+            </goals>
+            <configuration>
+                <suffixes>(?&lt;!Integration)(Test|Spec)</suffixes>
+            </configuration>
+        </execution>
+        <execution>
+            <id>integration-test</id>
+            <phase>integration-test</phase>
+            <goals>
+                <goal>test</goal>
+            </goals>
+            <configuration>
+                <suffixes>(?&lt;=Integration)(Test|Spec)</suffixes>
+            </configuration>
+        </execution>
+    </executions>
+    </plugin>
+```
