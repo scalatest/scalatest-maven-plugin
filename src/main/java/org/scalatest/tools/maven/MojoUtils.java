@@ -10,37 +10,30 @@ import java.util.List;
  * @author Jon-Anders Teigen
  */
 final class MojoUtils {
+
     private MojoUtils() {
     }
 
-    static interface F {
-        public String f(String in);
+    interface F {
+        String f(String in);
     }
 
-    static F passThrough = new F() {
-        public String f(String in) {
-            return in;
-        }
-    };
+    static F passThrough = in -> in;
 
     static F fileRelativeTo(final File relative) {
-        return new F() {
-            public String f(String in) {
-                File file = new File(relative, in);
-                File parentDir = file.getParentFile();
-                createIfNotExists(parentDir); // sideeffect!
-                return file.getAbsolutePath();
-            }
+        return in -> {
+            File file = new File(relative, in);
+            File parentDir = file.getParentFile();
+            createIfNotExists(parentDir); // sideeffect!
+            return file.getAbsolutePath();
         };
     }
 
     static F dirRelativeTo(final File relative) {
-        return new F() {
-            public String f(String in) {
-                File dir = new File(relative, in);
-                createIfNotExists(dir); // sideeffect!
-                return dir.getAbsolutePath();
-            }
+        return in -> {
+            File dir = new File(relative, in);
+            createIfNotExists(dir); // sideeffect!
+            return dir.getAbsolutePath();
         };
     }
 
@@ -52,8 +45,8 @@ final class MojoUtils {
     }
 
     static List<String> compoundArg(String name, String... strings) {
-        List<String> list = new ArrayList<String>();
-        List<String> params = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
+        List<String> params = new ArrayList<>();
         for (String commaSeparated : strings) {
             params.addAll(splitOnComma(commaSeparated));
         }
@@ -72,7 +65,7 @@ final class MojoUtils {
     }
 
     static List<String> suiteArg(String name, String commaSeparated) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String param : splitOnComma(commaSeparated)) {
             list.add(name);
             list.add(param);
@@ -81,7 +74,7 @@ final class MojoUtils {
     }
 
     static List<String> reporterArg(String name, String commaSeparated, F map) {
-        List<String> r = new ArrayList<String>();
+        List<String> r = new ArrayList<>();
         for (String arg : splitOnComma(commaSeparated)) {
             String[] split = arg.split("\\s");
             if (split.length == 1) {
@@ -101,7 +94,7 @@ final class MojoUtils {
     // list ("a", "b", "c"), but "a\, b, c" returns ("a, b", "c").
     //
     static List<String> splitOnComma(String cs) {
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         if (cs == null) {
             return args;
         } else {
@@ -114,7 +107,7 @@ final class MojoUtils {
     }
 
     static String[] concat(List<String>... lists) {
-        List<String> c = new ArrayList<String>();
+        List<String> c = new ArrayList<>();
         for (List<String> l : lists) {
             c.addAll(l);
         }

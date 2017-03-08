@@ -6,6 +6,7 @@ import org.scalatest.matchers.{MatchResult, Matcher}
   * @author Jon-Anders Teigen
   */
 trait PluginMatchers {
+
   def containSlice(slice: String*) = new Matcher[Array[String]] {
     def apply(seq: Array[String]) = {
       MatchResult(

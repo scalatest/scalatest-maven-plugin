@@ -146,7 +146,7 @@ public class TestMojo extends AbstractScalaTestMojo {
     }
 
     private List<String> htmlreporters() {
-        List<String> r = new ArrayList<String>();
+        List<String> r = new ArrayList<>();
 
         for (String arg : splitOnComma(htmlreporters)) {
             String[] split = arg.split("\\s+");

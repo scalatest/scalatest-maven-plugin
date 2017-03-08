@@ -10,6 +10,7 @@ import org.scalatest.{BeforeAndAfterAll, Matchers}
   * @author Jon -Anders Teigen
   */
 class PluginTest extends JUnit3Suite with Matchers with PluginMatchers with BeforeAndAfterAll {
+
   val tmpDir = new File(System.getProperty("java.io.tmpdir"))
   val reportsDirectory = new File(tmpDir, "reportsDirectory")
   val baseDir = new File(tmpDir, "basedir");

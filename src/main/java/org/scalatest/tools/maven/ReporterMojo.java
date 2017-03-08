@@ -51,8 +51,6 @@ public class ReporterMojo extends AbstractScalaTestMojo implements MavenReport {
             runScalaTest(configuration());
         } catch (MojoFailureException e) {
             throw new MavenReportException("Failure executing ScalaTest", e);
-        } catch (RuntimeException e) {
-            throw new MavenReportException("Failure executing ScalaTest", e);
         }
 
         // ScalaTest outputs plain text but the Mojo requires HTML output so we'll create a bare-bones HTML doc and
@@ -105,7 +103,7 @@ public class ReporterMojo extends AbstractScalaTestMojo implements MavenReport {
         BufferedReader reader = new BufferedReader(new FileReader(outputFile));
 
         try {
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 writer.println(line);
             }

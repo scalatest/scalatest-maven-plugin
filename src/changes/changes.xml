@@ -3,23 +3,21 @@
         <title>Maven ScalaTest Plugin</title>
     </properties>
     <body>
-        <release version="1.1.0-SNAPSHOT" date="${build.timestamp}">
-            <action dev="deca" type="add">Removed maven-gpg-plugin and maven-invoker-plugin from Maven build. IT Maven
-                sub-module will not be included in Maven build
-            </action>
-            <action dev="deca" type="add">Added <additionalparam>-Xdoclint:none</additionalparam> to
-                maven-javadocs-plugin
-            </action>
-            <action dev="deca" type="add">Removed deprectaed maven-scala-plugin</action>
+        <release version="1.1.1" date="${build.timestamp}">
+            <action dev="deca" type="remove">Removed it project</action>
+            <action dev="deca" type="remove">Removed maven-3 profile</action>
+        </release>
+        <release version="1.1.0" date="${build.timestamp}">
+            <action dev="deca" type="remove">Removed maven-gpg-plugin and maven-invoker-plugin from Maven build. IT Maven sub-module will not be included in Maven build</action>
+            <action dev="deca" type="add">Added -Xdoclint:none to maven-javadocs-plugin</action>
+            <action dev="deca" type="remove">Removed deprectaed maven-scala-plugin</action>
             <action dev="deca" type="add">Added net.alchim31.maven:scala-maven-plugin</action>
-            <action dev="deca" type="add">Updated all dependencies and maven plugin versions</action>
-            <action dev="deca" type="add">Updated developers and scm section</action>
-            <action dev="deca" type="add">Updated README.md</action>
+            <action dev="deca" type="update">Updated all dependencies and maven plugin versions</action>
+            <action dev="deca" type="update">Updated developers and scm section</action>
+            <action dev="deca" type="update">Updated README.md</action>
         </release>
         <release version="1.0" date="${build.timestamp}" description="Initial release">
-            <action dev="teigen" type="add">Created initial version. Jon gets credit for most of the work in this
-                release.
-            </action>
+            <action dev="teigen" type="add">Created initial version. Jon gets credit for most of the work in this release.</action>
             <action dev="trenchguinea" type="update">Updated to work with Scala 2.8 and cleaned up for release.</action>
         </release>
     </body>

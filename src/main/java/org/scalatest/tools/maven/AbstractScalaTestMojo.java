@@ -310,11 +310,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             getLog().debug(commandLogStatement);
         }
 
-        final StreamConsumer streamConsumer = new StreamConsumer() {
-            public void consumeLine(final String line) {
-                System.out.println(line);
-            }
-        };
+        final StreamConsumer streamConsumer = System.out::println;
         try {
             final int result = CommandLineUtils.executeCommandLine(cli, streamConsumer, streamConsumer, forkedProcessTimeoutInSeconds);
             return result == 0;
@@ -326,7 +322,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private String buildClassPathEnvironment() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         boolean first = true;
         for (String e : testClasspathElements()) {
             if (first) {
@@ -362,7 +358,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     // This is just used by run to get a class loader from which to load ScalaTest
     private ClassLoader classLoader() {
         try {
-            List<URL> urls = new ArrayList<URL>();
+            List<URL> urls = new ArrayList<>();
             for (String element : testClasspathElements()) {
                 File file = new File(element);
                 if (file.isFile()) {
@@ -411,7 +407,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> config() {
-        List<String> c = new ArrayList<String>();
+        List<String> c = new ArrayList<>();
         for (String pair : splitOnComma(config)) {
             c.add("-D" + pair);
         }
@@ -434,7 +430,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> parallel() {
-        return parallel ? singletonList("-c") : Collections.<String>emptyList();
+        return parallel ? singletonList("-c") : Collections.emptyList();
     }
 
     //
@@ -448,7 +444,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     // sign, and -z is used for others.
     //
     private List<String> suites() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         for (String suite : splitOnComma(suites)) {
             SuiteTestPair pair = new SuiteTestPair(suite);
@@ -522,7 +518,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     // 'tests' list, with -t used for those names prefixed by '@'.
     //
     private List<String> tests() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         for (String test : splitOnComma(tests)) {
             addTest(list, test);
@@ -551,7 +547,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> testsFiles() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String param : splitOnComma(testsFiles)) {
             File file = new File(param);
             if (file.exists()) {
