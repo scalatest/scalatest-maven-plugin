@@ -17,16 +17,21 @@
 
   <properties>
     <scala.major.version>2.11</scala.major.version>
-    <scala.minor.version>8</scala.minor.version>
+    <scala.minor.version>7</scala.minor.version>
     <scala.version>${scala.major.version}.${scala.minor.version}</scala.version>
     <scalatest.version>2.2.6</scalatest.version>
-    <maven.scala.plugin.version>2.14.1</maven.scala.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <build.timestamp>${maven.build.timestamp}</build.timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
     <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
     <maven.project.info.reports.plugin.version>2.9</maven.project.info.reports.plugin.version>
+    <maven.plugin.api.version>3.3.9</maven.plugin.api.version>
+    <maven.core.version>3.3.9</maven.core.version>
+    <junit.version>4.12</junit.version>
+    <maven.reporting.api.version>3.0</maven.reporting.api.version>
+    <scala.maven.plugin.version>3.2.2</scala.maven.plugin.version>
+    <maven.enforcer.plugin.version>1.4.1</maven.enforcer.plugin.version>
   </properties>
 
   <licenses>
@@ -71,27 +76,17 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.9</version>
+      <version>${maven.plugin.api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-      <version>2.0.9</version>
+      <artifactId>maven-core</artifactId>
+      <version>${maven.core.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
-      <version>2.0.9</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-sink-api</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>3.0</version>
+      <version>${maven.reporting.api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
@@ -108,7 +103,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.1</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -128,19 +123,22 @@
 
     <plugins>
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
-        <version>${maven.scala.plugin.version}</version>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>${scala.maven.plugin.version}</version>
+        <configuration>
+          <recompileMode>incremental</recompileMode>
+          <scalaVersion>${scala.version}</scalaVersion>
+        </configuration>
         <executions>
           <execution>
+            <id>scala-test-compile</id>
+            <phase>test-compile</phase>
             <goals>
               <goal>testCompile</goal>
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <scalaVersion>${scala.version}</scalaVersion>
-        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -182,11 +180,6 @@
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <streamLogs>true</streamLogs>
           <settingsFile>src/it/settings.xml</settingsFile>
-          <properties>
-            <scala.version>${scala.version}</scala.version>
-            <scalatest.version>${scalatest.version}</scalatest.version>
-            <maven.scala.plugin.version>${maven.scala.plugin.version}</maven.scala.plugin.version>
-          </properties>
           <goals>
             <goal>clean</goal>
             <goal>test</goal>
@@ -206,6 +199,27 @@
             <goals>
               <goal>sign</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven.enforcer.plugin.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <!-- We get this from scala-maven-plugin -->
+                  <version>[3.0.4,)</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -266,27 +280,4 @@
       </plugin>
     </plugins>
   </reporting>
-
-  <profiles>
-    <profile>
-      <id>maven-3</id>
-      <activation>
-        <file>
-          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-4760) -->
-          <exists>${basedir}</exists>
-        </file>
-      </activation>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-site-plugin</artifactId>
-              <version>3.5.1</version>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
-  </profiles>
 </project>
