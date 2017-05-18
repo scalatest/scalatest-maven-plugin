@@ -227,6 +227,12 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
      */
     boolean logForkedProcessCommand;
 
+    /**
+     * Span scale factor.
+     *
+     * @parameter expression="${spanScaleFactor}"
+     */
+    double spanScaleFactor = 1.0;
 
     // runScalaTest is called by the concrete mojo subclasses  TODO: make it protected and others too
     // Returns true if all tests pass
@@ -407,6 +413,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             addAll(memoryFiles());
             addAll(testsFiles());
             addAll(junitClasses());
+            addAll(spanScaleFactor());
         }};
     }
 
@@ -528,6 +535,15 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
         for (String test: splitOnComma(tests)) {
             addTest(list, test);
+        }
+        return list;
+    }
+
+    private List<String> spanScaleFactor() {
+        List<String> list = new ArrayList<String>();
+        if (spanScaleFactor != 1.0) {
+            list.add("-F");
+            list.add(spanScaleFactor + "");
         }
         return list;
     }
