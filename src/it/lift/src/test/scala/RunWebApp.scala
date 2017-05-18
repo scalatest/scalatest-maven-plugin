@@ -2,7 +2,7 @@ import _root_.org.mortbay.jetty.Connector
 import _root_.org.mortbay.jetty.Server
 import _root_.org.mortbay.jetty.webapp.WebAppContext
 
-object RunWebApp extends Application {
+object RunWebApp extends App {
   val server = new Server(8080)
   val context = new WebAppContext()
   context.setServer(server)
