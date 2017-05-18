@@ -19,7 +19,7 @@
     <scala.major.version>2.11</scala.major.version>
     <scala.minor.version>7</scala.minor.version>
     <scala.version>${scala.major.version}.${scala.minor.version}</scala.version>
-    <scalatest.version>2.2.6</scalatest.version>
+    <scalatest.version>3.0.1</scalatest.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <build.timestamp>${maven.build.timestamp}</build.timestamp>
