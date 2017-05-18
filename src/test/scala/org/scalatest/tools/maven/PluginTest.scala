@@ -1,7 +1,7 @@
 package org.scalatest.tools.maven
 
 import java.io.File
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.junit.JUnit3Suite
 import java.util.ArrayList
 import org.scalatest.BeforeAndAfterAll
@@ -9,7 +9,11 @@ import org.scalatest.BeforeAndAfterAll
 /**
  * @author Jon -Anders Teigen
  */
-class PluginTest extends JUnit3Suite with ShouldMatchers with PluginMatchers with BeforeAndAfterAll {
+final class PluginTest
+    extends JUnit3Suite
+    with BeforeAndAfterAll
+    with Matchers
+    with PluginMatchers {
   val tmpDir = new File(System.getProperty("java.io.tmpdir"))
   val reportsDirectory = new File(tmpDir, "reportsDirectory")
   val baseDir = new File(tmpDir, "basedir");
