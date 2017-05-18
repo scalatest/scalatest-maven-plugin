@@ -561,7 +561,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> testNGConfigFiles() {
-        return suiteArg("-t", testNGConfigFiles);
+        return suiteArg("-b", testNGConfigFiles);
     }
 
     private List<String> memoryFiles() {
