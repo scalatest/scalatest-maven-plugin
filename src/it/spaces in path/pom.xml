@@ -36,6 +36,27 @@
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
         <version>@scala.maven.plugin.version@</version>
+        <configuration>
+          <recompileMode>incremental</recompileMode>
+          <scalaVersion>${scala.version}</scalaVersion>
+        </configuration>
+        <executions>
+          <execution>
+            <id>scala-compile</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>add-source</goal>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>scala-test-compile</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <!-- disable surefire -->
       <plugin>
@@ -50,6 +71,9 @@
       <plugin>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest-maven-plugin</artifactId>
+        <configuration>
+          <logForkedProcessCommand>true</logForkedProcessCommand>
+        </configuration>
         <executions>
           <execution>
             <goals>

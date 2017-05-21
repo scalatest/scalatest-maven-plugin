@@ -20,3 +20,5 @@ if (testSummaryLines.size == 0) {
 if (testSummaryLines[0].contains("Tests: succeeded 0, failed 0, canceled 0, ignored 0, pending 0")) {
   throw new Exception("No tests were run by scalatest!")
 }
+
+return true
