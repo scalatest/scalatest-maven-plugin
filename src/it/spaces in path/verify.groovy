@@ -1,9 +1,8 @@
 
-//def logs = new File(basedir, "target/build.log")
-def logsFile = new File("build.log")
+def logsFile = new File(basedir, "build.log")
 
 if (!logsFile.exists()) {
-  throw new Exception("Could not find build.log")
+  throw new Exception("Could not find build.log.  Searched: " + logsFile)
 }
 
 def testSummaryLines = []
