@@ -11,6 +11,7 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 
+import static java.lang.String.format;
 import static org.scalatest.tools.maven.MojoUtils.*;
 
 import java.io.*;
@@ -283,10 +284,10 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         // Set up system properties
         if (systemProperties != null) {
             for (final Map.Entry<String, String> entry : systemProperties.entrySet()) {
-                cli.createArg().setValue(String.format("-D%s=%s", entry.getKey(), entry.getValue()));
+                cli.createArg().setValue(format("-D%s=%s", entry.getKey(), entry.getValue()));
             }
         }
-        cli.createArg().setValue(String.format("-Dbasedir=%s", project.getBasedir().getAbsolutePath()));
+        cli.createArg().setValue(format("-Dbasedir=%s", project.getBasedir().getAbsolutePath()));
 
         // Set user specified JVM arguments
         if (argLine != null) {
@@ -322,7 +323,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             return result == 0;
         }
         catch (final CommandLineTimeOutException e) {
-            throw new MojoFailureException(String.format("Timed out after %d seconds waiting for forked process to complete.", forkedProcessTimeoutInSeconds));
+            throw new MojoFailureException(format("Timed out after %d seconds waiting for forked process to complete.", forkedProcessTimeoutInSeconds));
         }
         catch (final CommandLineException e) {
             throw new MojoFailureException("Exception while executing forked process.", e);
@@ -346,7 +347,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
     private String forkedProcessDebuggingArguments() {
         if (debugArgLine == null) {
-            return String.format("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=%s", debuggerPort);
+            return format("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=%s", debuggerPort);
         } else {
             return debugArgLine;
         }
@@ -426,10 +427,35 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> runpath() {
+        checkRunpathArgument(outputDirectory);
+        checkRunpathArgument(testOutputDirectory);
+
+        String outputPath = outputDirectory.getAbsolutePath();
+        if(outputPath.contains(" ")) {
+            outputPath = outputPath.replaceAll(" ","\\\\ ");
+            getLog().debug(format("Escaped output directory path: %s", outputPath));
+        }
+
+        String testOutputPath = testOutputDirectory.getAbsolutePath();
+        if(testOutputPath.contains(" ")) {
+            testOutputPath = testOutputPath.replaceAll(" ","\\\\ ");
+            getLog().debug(format("Escaped test output directory path: %s", testOutputPath));
+        }
+
         return compoundArg("-R",
-                outputDirectory.getAbsolutePath(),
-                testOutputDirectory.getAbsolutePath(),
+                outputPath,
+                testOutputPath,
                 runpath);
+    }
+
+    private void checkRunpathArgument(File directory) {
+        if(!directory.exists()) {
+            getLog().warn(format("Runpath directory does not exist: %s", directory.getAbsolutePath()));
+        } else if(!directory.isDirectory()) {
+            getLog().warn(format("Runpath argument is not a directory: %s", directory.getAbsolutePath()));
+        } else if(!directory.canRead()) {
+            getLog().warn(format("Runpath directory is not readable: %s", directory.getAbsolutePath()));
+        }
     }
 
     private List<String> tagsToInclude() {
