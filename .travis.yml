@@ -9,4 +9,4 @@ cache:
   directories:
     - $HOME/.m2
 
-script: mvn verify
+script: mvn clean package invoker:install invoker:run
