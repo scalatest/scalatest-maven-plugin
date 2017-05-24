@@ -175,7 +175,6 @@
           <projectsDirectory>src/it</projectsDirectory>
           <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
           <pomIncludes>
-            <pomInclude>lift/pom.xml</pomInclude>
             <pomInclude>spaces in path/pom.xml</pomInclude>
           </pomIncludes>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
@@ -185,7 +184,6 @@
           <goals>
             <goal>clean</goal>
             <goal>test</goal>
-            <goal>site</goal>
           </goals>
         </configuration>
       </plugin>
