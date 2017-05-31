@@ -6,12 +6,12 @@ class MojoUtilsTest {
   private var savedJavaHome: Option[String] = _
 
   @Before
-  def save() = {
+  def save(): Unit = {
     savedJavaHome = Option(System.getProperty("java.home"))
   }
 
   @After
-  def restore() = {
+  def restore(): Unit = {
     savedJavaHome match {
       case None => System.clearProperty("java.home")
       case Some(value) => System.setProperty("java.home", value)
@@ -19,13 +19,13 @@ class MojoUtilsTest {
   }
 
   @Test
-  def getJvmHappyPath() = {
+  def getJvmHappyPath(): Unit = {
     System.setProperty("java.home", "/test/jvm")
     assert(MojoUtils.getJvm == "/test/jvm/bin/java")
   }
 
   @Test
-  def getJvmWithoutJavaHome() = {
+  def getJvmWithoutJavaHome(): Unit = {
     System.clearProperty("java.home")
     assert(MojoUtils.getJvm == "java")
   }
