@@ -1,6 +1,6 @@
 package org.scalatest.tools.maven
 
-import org.junit.{Before, Test}
+import org.junit.{After, Before, Test}
 
 class MojoUtilsTest {
   private var savedJavaHome: Option[String] = _
@@ -10,6 +10,7 @@ class MojoUtilsTest {
     savedJavaHome = Option(System.getProperty("java.home"))
   }
 
+  @After
   def restore() = {
     savedJavaHome match {
       case None => System.clearProperty("java.home")
