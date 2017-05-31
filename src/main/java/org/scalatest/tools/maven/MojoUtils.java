@@ -3,7 +3,8 @@ package org.scalatest.tools.maven;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.File;
-import java.io.IOException;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Provides internal utilities for the Mojo's operations.
@@ -120,5 +121,13 @@ final class MojoUtils {
             c.addAll(l);
         }
         return c.toArray(new String[c.size()]);
+    }
+
+    static String getJvm() {
+        if (!isEmpty(System.getProperty( "java.home" ))) {
+            return System.getProperty( "java.home" ) + File.separator + "bin" + File.separator + "java";
+        } else {
+            return "java";
+        }
     }
 }

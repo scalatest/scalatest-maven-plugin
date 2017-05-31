@@ -319,19 +319,6 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         }
     }
 
-    private String getJvm()
-    {
-        // use the same JVM as the one used to run Maven (the "java.home" one)
-        String jvmToUse = System.getProperty( "java.home" ) + File.separator + "bin" + File.separator + "java";
-
-        if (isEmpty(jvmToUse)) {
-            jvmToUse = "java";
-        }
-
-        getLog().debug( "Using JVM: " + jvmToUse );
-        return jvmToUse;
-    }
-
     private String buildClassPathEnvironment() {
         StringBuffer buf = new StringBuffer();
         boolean first = true;
