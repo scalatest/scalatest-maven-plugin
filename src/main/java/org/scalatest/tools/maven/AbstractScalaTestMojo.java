@@ -174,14 +174,14 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
      *
      * @parameter
      */
-    Map<String, String> environmentVariables;
+    Map<String, Object> environmentVariables;
 
     /**
      * Additional system properties to pass to the forked process.
      *
      * @parameter
      */
-    Map<String, String> systemProperties;
+    Map<String, Object> systemProperties;
 
     /**
      * Option to specify whether the forked process should wait at startup for a remote debugger to attach.
@@ -274,15 +274,15 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
         // Set up environment
         if (environmentVariables != null) {
-            for (final Map.Entry<String, String> entry : environmentVariables.entrySet()) {
-                cli.addEnvironment(entry.getKey(), entry.getValue());
+            for (final Map.Entry<String, Object> entry : environmentVariables.entrySet()) {
+                cli.addEnvironment(entry.getKey(), entry.getValue().toString());
             }
         }
         cli.addEnvironment("CLASSPATH", buildClassPathEnvironment());
 
         // Set up system properties
         if (systemProperties != null) {
-            for (final Map.Entry<String, String> entry : systemProperties.entrySet()) {
+            for (final Map.Entry<String, Object> entry : systemProperties.entrySet()) {
                 cli.createArg().setValue(String.format("-D%s=%s", entry.getKey(), entry.getValue()));
             }
         }
