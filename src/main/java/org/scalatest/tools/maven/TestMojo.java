@@ -1,7 +1,12 @@
 package org.scalatest.tools.maven;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+
+import static java.util.Collections.newSetFromMap;
 import static org.scalatest.tools.maven.MojoUtils.*;
 
 import java.io.File;
@@ -42,6 +47,12 @@ public class TestMojo extends AbstractScalaTestMojo {
      * @parameter property="maven.test.failure.ignore"
      */
     boolean testFailureIgnore;
+
+    /**
+     * Set to true to run the verify goal on failure
+     * @parameter default-value=false property="maven.test.failure.run.verify"
+     */
+    boolean runVerifyOnFailure;
 
     /**
      * Comma separated list of filereporters. A filereporter consists of an optional
@@ -104,7 +115,30 @@ public class TestMojo extends AbstractScalaTestMojo {
             getLog().info("Tests are skipped.");
         } else {
             if (!runScalaTest(configuration()) && !testFailureIgnore) {
-                throw new MojoFailureException("There are test failures");
+                if (runVerifyOnFailure) {
+                    try {
+                        File newFile = new File(
+                            reportsDirectory.getAbsolutePath() + "/scalatest-summary.txt");
+
+                        if (newFile.createNewFile()) {
+                            FileWriter fileWriter =
+                                new FileWriter(newFile);
+
+                            BufferedWriter bufferedWriter =
+                                new BufferedWriter(fileWriter);
+                            bufferedWriter.write("failure");
+                            bufferedWriter.close();
+
+                        } else {
+                            throw new IOException("create new file failed");
+                        }
+                    } catch (IOException ex) {
+                        throw new MojoExecutionException(
+                            "Failure to write to file, it might not exist: " + ex);
+                    }
+                } else {
+                    throw new MojoExecutionException("There are test failures");
+                }
             }
         }
     }
