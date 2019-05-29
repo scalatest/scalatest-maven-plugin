@@ -11,6 +11,7 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 
+import static java.util.Collections.unmodifiableList;
 import static org.scalatest.tools.maven.MojoUtils.*;
 
 import java.io.*;
@@ -398,7 +399,8 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
     // This is the configuration parameters shared by all concrete Mojo subclasses
     List<String> sharedConfiguration() {
-        return new ArrayList<String>() {{
+        return unmodifiableList(
+            new ArrayList<String>() {{
             addAll(runpath());
             addAll(config());
             addAll(tagsToInclude());
@@ -414,7 +416,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             addAll(testsFiles());
             addAll(junitClasses());
             addAll(spanScaleFactor());
-        }};
+        }});
     }
 
     private List<String> config() {
@@ -422,7 +424,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         for(String pair : splitOnComma(config)){
             c.add("-D"+pair);
         }
-        return c;
+        return unmodifiableList(c);
     }
 
     private List<String> runpath() {
@@ -441,7 +443,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> parallel() {
-        return parallel ? singletonList("-P") : Collections.<String>emptyList();
+        return parallel ? unmodifiableList(singletonList("-P")) : Collections.<String>emptyList();
     }
 
     //
@@ -469,7 +471,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
                 }
             }
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     //
@@ -536,7 +538,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         for (String test: splitOnComma(tests)) {
             addTest(list, test);
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     private List<String> spanScaleFactor() {
@@ -545,7 +547,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             list.add("-F");
             list.add(spanScaleFactor + "");
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     private List<String> suffixes() {
@@ -577,7 +579,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
                 list.add(param);
             }
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     private List<String> junitClasses() {
