@@ -115,6 +115,7 @@ Usage Documentation
       <execution>
         <goals>
           <goal>test</goal>
+          <goal>verify</goal>
         </goals>
         <configuration>
           <xmlreports>test-results</xmlreports>
@@ -138,6 +139,7 @@ Usage Documentation
             <execution>
               <goals>
                 <goal>test</goal>
+                <goal>verify</goal>
               </goals>
               <configuration>
                 <xmlreports>test-results</xmlreports>
@@ -150,6 +152,42 @@ Usage Documentation
     </build>
   </profile>
 </profiles>
++--
+
+* Allowing the Post-Integration Phase to run
+
+  In its original implementation, the plugin fails the build immediately if there is a test failure.
+  If you are using a dockerized test setup, this is bad behavior because your docker instances will
+  not have enough time to shutdown (https://github.com/scalatest/scalatest-maven-plugin/issues/45).
+  You can use these config values to stop this from happening by failing the build in the verification
+  stage rather than the testing phase.
+
++--
+
+<plugin>
+  <groupId>org.scalatest</groupId>
+  <artifactId>scalatest-maven-plugin</artifactId>
+  <version>3.0.0</version>
+  <configuration>
+    <runVerifyOnFailure>true</runVerifyOnFailure>
+  </configuration>
+  <executions>
+    <execution>
+      <id>test</id>
+      <phase>integration-test</phase>
+      <goals>
+        <goal>test</goal>
+      </goals>
+    </execution>
+    <execution>
+      <id>verify</id>
+      <goals>
+        <goal>verify</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+
 +--
 
   The "test" and "gui" goals support multiple Reporters of different types and formatting options for each
