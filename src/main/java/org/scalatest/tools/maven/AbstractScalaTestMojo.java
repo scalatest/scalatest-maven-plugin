@@ -2,14 +2,9 @@ package org.scalatest.tools.maven;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.CommandLineTimeOutException;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.StreamConsumer;
+import org.codehaus.plexus.util.cli.*;
 
 import static java.util.Collections.unmodifiableList;
 import static org.scalatest.tools.maven.MojoUtils.*;
@@ -28,6 +23,14 @@ import java.net.URLClassLoader;
 import java.net.URL;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.scalatest.tools.maven.MojoUtils.*;
 
 /**
  * Provides the base for all mojos.
@@ -271,7 +274,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
         final Commandline cli = new Commandline();
         cli.setWorkingDirectory(project.getBasedir());
-        cli.setExecutable("java");
+        cli.setExecutable(getJvm());
 
         // Set up environment
         if (environmentVariables != null) {
