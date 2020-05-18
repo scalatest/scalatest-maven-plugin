@@ -1,22 +1,17 @@
 package org.scalatest.tools.maven
 
-import org.junit.{After, Before, Test}
+import org.junit.contrib.java.lang.system.{ClearSystemProperties, EnvironmentVariables}
+import org.junit.{Rule, Test}
 
 class MojoUtilsTest {
-  private var savedJavaHome: Option[String] = _
+  val _env: EnvironmentVariables = new EnvironmentVariables()
+  val _sys: ClearSystemProperties = new ClearSystemProperties("java.home")
 
-  @Before
-  def save(): Unit = {
-    savedJavaHome = Option(System.getProperty("java.home"))
-  }
+  @Rule
+  def env: EnvironmentVariables = _env
 
-  @After
-  def restore(): Unit = {
-    savedJavaHome match {
-      case None => System.clearProperty("java.home")
-      case Some(value) => System.setProperty("java.home", value)
-    }
-  }
+  @Rule
+  def sys: ClearSystemProperties = _sys
 
   @Test
   def getJvmHappyPath(): Unit = {
@@ -26,7 +21,15 @@ class MojoUtilsTest {
 
   @Test
   def getJvmWithoutJavaHome(): Unit = {
-    System.clearProperty("java.home")
+    env.clear("JAVA_HOME")
     assert(MojoUtils.getJvm == "java")
+  }
+
+  @Test
+  def getJvmFromEnvironment(): Unit = {
+    env.clear("JAVA_HOME")
+    env.set("JAVA_HOME", "/opt/jdk-11")
+    Console.print(MojoUtils.getJvm)
+    assert(MojoUtils.getJvm == "/opt/jdk-11/bin/java")
   }
 }

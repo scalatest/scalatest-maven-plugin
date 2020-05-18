@@ -1,8 +1,8 @@
 package org.scalatest.tools.maven;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -123,11 +123,26 @@ final class MojoUtils {
         return c.toArray(new String[c.size()]);
     }
 
-    static String getJvm() {
-        if (!isEmpty(System.getProperty( "java.home" ))) {
-            return System.getProperty( "java.home" ) + File.separator + "bin" + File.separator + "java";
+    private static String getJavaHome() {
+        final String result;
+        if (!isEmpty(System.getProperty("java.home"))) {
+            result = System.getProperty("java.home");
+        } else if (!isEmpty(System.getenv("JAVA_HOME"))) {
+            result = System.getenv("JAVA_HOME");
         } else {
-            return "java";
+            result = null;
         }
+        return result;
+    }
+
+    static String getJvm() {
+        final String jh = getJavaHome();
+        final String result;
+        if (jh == null) {
+            result = "java";
+        } else {
+            result = jh + File.separator + "bin" + File.separator + "java";
+        }
+        return result;
     }
 }
