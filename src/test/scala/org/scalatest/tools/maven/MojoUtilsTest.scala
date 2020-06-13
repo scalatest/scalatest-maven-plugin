@@ -15,6 +15,7 @@ class MojoUtilsTest {
 
   @Test
   def getJvmHappyPath(): Unit = {
+    env.clear("JAVA_HOME")
     System.setProperty("java.home", "/test/jvm")
     assert(MojoUtils.getJvm == "/test/jvm/bin/java")
   }
@@ -30,6 +31,13 @@ class MojoUtilsTest {
     env.clear("JAVA_HOME")
     env.set("JAVA_HOME", "/opt/jdk-11")
     Console.print(MojoUtils.getJvm)
+    assert(MojoUtils.getJvm == "/opt/jdk-11/bin/java")
+  }
+
+  @Test
+  def getJvmJavaHomeIsPriority(): Unit = {
+    System.setProperty("java.home", "/test/jvm")
+    env.set("JAVA_HOME", "/opt/jdk-11")
     assert(MojoUtils.getJvm == "/opt/jdk-11/bin/java")
   }
 }
