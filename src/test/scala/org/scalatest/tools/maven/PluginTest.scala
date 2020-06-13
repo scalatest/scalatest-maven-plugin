@@ -17,8 +17,16 @@ final class PluginTest
   val tmpDir = new File(System.getProperty("java.io.tmpdir"))
   val reportsDirectory = new File(tmpDir, "reportsDirectory")
   val baseDir = new File(tmpDir, "basedir");
-  val testOutputDirectory = new File(reportsDirectory, "testOutputDirectory").getAbsolutePath
-  val outputDirectory = new File(reportsDirectory, "outputDirectory").getAbsolutePath
+  val testOutputDirectory = {
+    val dir = new File(reportsDirectory, "testOutputDirectory")
+    dir.mkdirs()
+    dir.getAbsolutePath
+  }
+  val outputDirectory = {
+    val dir = new File(reportsDirectory, "outputDirectory")
+    dir.mkdirs()
+    dir.getAbsolutePath
+  }
 
   override def afterAll {
     def delete(it: File) {

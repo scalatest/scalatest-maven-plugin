@@ -431,10 +431,35 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> runpath() {
+        checkRunpathArgument("Output", outputDirectory);
+        checkRunpathArgument("Test output", testOutputDirectory);
+
+        String outputPath = outputDirectory.getAbsolutePath();
+        if(outputPath.contains(" ")) {
+            outputPath = outputPath.replaceAll(" ","\\\\ ");
+            getLog().debug(String.format("Escaped output directory path: %s", outputPath));
+        }
+
+        String testOutputPath = testOutputDirectory.getAbsolutePath();
+        if(testOutputPath.contains(" ")) {
+            testOutputPath = testOutputPath.replaceAll(" ","\\\\ ");
+            getLog().debug(String.format("Escaped test output directory path: %s", testOutputPath));
+        }
+
         return compoundArg("-R",
-                outputDirectory.getAbsolutePath(),
-                testOutputDirectory.getAbsolutePath(),
+                outputPath,
+                testOutputPath,
                 runpath);
+    }
+
+    private void checkRunpathArgument(String directoryName, File directory) {
+        if(!directory.exists()) {
+            getLog().warn(String.format("%s directory does not exist: %s", directoryName, directory.getAbsolutePath()));
+        } else if(!directory.isDirectory()) {
+            getLog().warn(String.format("%s is not a directory: %s", directoryName, directory.getAbsolutePath()));
+        } else if(!directory.canRead()) {
+            getLog().warn(String.format("%s directory is not readable: %s", directoryName, directory.getAbsolutePath()));
+        }
     }
 
     private List<String> tagsToInclude() {
