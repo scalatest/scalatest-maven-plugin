@@ -6,7 +6,21 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.cli.*;
 
-import java.io.File;
+import static java.util.Collections.unmodifiableList;
+import static org.scalatest.tools.maven.MojoUtils.*;
+
+import java.io.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+
+import static java.util.Collections.singletonList;
+
+import java.net.MalformedURLException;
+import java.net.URLClassLoader;
+import java.net.URL;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -388,7 +402,8 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
     // This is the configuration parameters shared by all concrete Mojo subclasses
     List<String> sharedConfiguration() {
-        return new ArrayList<String>() {{
+        return unmodifiableList(
+            new ArrayList<String>() {{
             addAll(runpath());
             addAll(config());
             addAll(tagsToInclude());
@@ -404,7 +419,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             addAll(testsFiles());
             addAll(junitClasses());
             addAll(spanScaleFactor());
-        }};
+        }});
     }
 
     private List<String> config() {
@@ -412,14 +427,39 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         for(String pair : splitOnComma(config)){
             c.add("-D"+pair);
         }
-        return c;
+        return unmodifiableList(c);
     }
 
     private List<String> runpath() {
+        checkRunpathArgument("Output", outputDirectory);
+        checkRunpathArgument("Test output", testOutputDirectory);
+
+        String outputPath = outputDirectory.getAbsolutePath();
+        if(outputPath.contains(" ")) {
+            outputPath = outputPath.replaceAll(" ","\\\\ ");
+            getLog().debug(String.format("Escaped output directory path: %s", outputPath));
+        }
+
+        String testOutputPath = testOutputDirectory.getAbsolutePath();
+        if(testOutputPath.contains(" ")) {
+            testOutputPath = testOutputPath.replaceAll(" ","\\\\ ");
+            getLog().debug(String.format("Escaped test output directory path: %s", testOutputPath));
+        }
+
         return compoundArg("-R",
-                outputDirectory.getAbsolutePath(),
-                testOutputDirectory.getAbsolutePath(),
+                outputPath,
+                testOutputPath,
                 runpath);
+    }
+
+    private void checkRunpathArgument(String directoryName, File directory) {
+        if(!directory.exists()) {
+            getLog().warn(String.format("%s directory does not exist: %s", directoryName, directory.getAbsolutePath()));
+        } else if(!directory.isDirectory()) {
+            getLog().warn(String.format("%s is not a directory: %s", directoryName, directory.getAbsolutePath()));
+        } else if(!directory.canRead()) {
+            getLog().warn(String.format("%s directory is not readable: %s", directoryName, directory.getAbsolutePath()));
+        }
     }
 
     private List<String> tagsToInclude() {
@@ -431,7 +471,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> parallel() {
-        return parallel ? singletonList("-P") : Collections.<String>emptyList();
+        return parallel ? unmodifiableList(singletonList("-P")) : Collections.<String>emptyList();
     }
 
     //
@@ -459,7 +499,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
                 }
             }
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     //
@@ -526,7 +566,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         for (String test: splitOnComma(tests)) {
             addTest(list, test);
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     private List<String> spanScaleFactor() {
@@ -535,7 +575,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             list.add("-F");
             list.add(spanScaleFactor + "");
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     private List<String> suffixes() {
@@ -567,7 +607,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
                 list.add(param);
             }
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     private List<String> junitClasses() {

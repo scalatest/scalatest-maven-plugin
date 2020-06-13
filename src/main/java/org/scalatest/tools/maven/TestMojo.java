@@ -7,6 +7,7 @@ import static org.scalatest.tools.maven.MojoUtils.*;
 import java.io.File;
 import java.util.Collections;
 import static java.util.Collections.singletonList;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ import java.util.ArrayList;
  * @author Bill Venners
  * @phase test
  * @goal test
+ * @threadSafe
  */
 public class TestMojo extends AbstractScalaTestMojo {
 
@@ -124,15 +126,15 @@ public class TestMojo extends AbstractScalaTestMojo {
     // These private methods create the relevant portion of the command line
     // to pass to Runner based on the corresponding Maven configuration parameter.
     private List<String> stdout() {
-        return singletonList(stdout == null ? "-o" : "-o" + stdout);
+        return unmodifiableList(singletonList(stdout == null ? "-o" : "-o" + stdout));
     }
 
     private List<String> stderr() {
-        return stderr == null ? Collections.<String>emptyList() : singletonList("-e" + stderr);
+        return stderr == null ? Collections.<String>emptyList() : unmodifiableList(singletonList("-e" + stderr));
     }
 
     private List<String> filereports() {
-        return reporterArg("-f", filereports, fileRelativeTo(reportsDirectory));
+        return unmodifiableList(reporterArg("-f", filereports, fileRelativeTo(reportsDirectory)));
     }
 
     private List<String> htmlreporters() {
@@ -151,7 +153,7 @@ public class TestMojo extends AbstractScalaTestMojo {
                 }
             }
         }
-        return r;
+        return unmodifiableList(r);
     }
 
     private List<String> reporters() {

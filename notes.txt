@@ -11,7 +11,7 @@ Work done so far
 To Use
 ------
 1. Disable maven-surefire-plugin by setting skipTests=true
-2. Add maven-scalatest-plugin to <build> section and configure the "test" goal in an execution
+2. Add scalatest-maven-plugin to <build> section and configure the "test" goal in an execution
 3. Execute "test" phase or directly execute the scalatest:test or scalatest:gui goals
 
 
