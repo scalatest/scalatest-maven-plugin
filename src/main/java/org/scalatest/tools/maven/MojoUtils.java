@@ -1,9 +1,13 @@
 package org.scalatest.tools.maven;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.File;
-import java.io.IOException;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Provides internal utilities for the Mojo's operations.
@@ -46,7 +50,7 @@ final class MojoUtils {
     }
 
     // sideeffect!
-    private static void createIfNotExists(File dir) {
+    private static synchronized void createIfNotExists(File dir) {
         if(!dir.exists() && !dir.mkdirs()){
             throw new IllegalStateException("Cannot create directory " + dir);
         }
@@ -69,7 +73,7 @@ final class MojoUtils {
             }
             list.add(a);
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     static List<String> suiteArg(String name, String commaSeparated) {
@@ -78,7 +82,7 @@ final class MojoUtils {
             list.add(name);
             list.add(param);
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     static List<String> reporterArg(String name, String commaSeparated, F map) {
@@ -93,7 +97,7 @@ final class MojoUtils {
                 r.add(map.f(split[1]));
             }
         }
-        return r;
+        return unmodifiableList(r);
     }
 
     //
@@ -104,13 +108,13 @@ final class MojoUtils {
     static List<String> splitOnComma(String cs) {
         List<String> args = new ArrayList<String>();
         if (cs == null) {
-            return args;
+            return unmodifiableList(args);
         } else {
             String[] split = cs.split("(?<!\\\\),");
             for (String arg : split) {
                 args.add(arg.trim().replaceAll("\\\\,", ","));
             }
-            return args;
+            return unmodifiableList(args);
         }
     }
 
@@ -120,5 +124,13 @@ final class MojoUtils {
             c.addAll(l);
         }
         return c.toArray(new String[c.size()]);
+    }
+
+    static String getJvm() {
+        if (!isEmpty(System.getProperty( "java.home" ))) {
+            return System.getProperty( "java.home" ) + File.separator + "bin" + File.separator + "java";
+        } else {
+            return "java";
+        }
     }
 }

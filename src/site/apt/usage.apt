@@ -4,11 +4,11 @@ Usage Documentation
 
   [[1]] Disable the maven-surefire-plugin
 
-  [[2]] Configure this maven-scalatest-plugin to run in the test phase
+  [[2]] Configure this scalatest-maven-plugin to run in the test phase
 
   []
 
-  To replace the maven-surefire-report-plugin with this plugin, simply add the maven-scalatest-plugin instead of
+  To replace the maven-surefire-report-plugin with this plugin, simply add the scalatest-maven-plugin instead of
   the maven-surefire-report-plugin to the reporting section of the POM.
 
   For example, in the build section of the POM, add something like the following:
@@ -29,7 +29,7 @@ Usage Documentation
   <!-- Enable Scalatest -->
   <plugin>
     <groupId>org.scalatest</groupId>
-    <artifactId>maven-scalatest-plugin</artifactId>
+    <artifactId>scalatest-maven-plugin</artifactId>
     <executions>
       <execution>
         <goals>
@@ -50,7 +50,7 @@ Usage Documentation
   on the maven-surefire-plugin.  There is nothing inherently wrong in having Surefire run your
   tests, but if you want all your tests to run through ScalaTest instead, then disabling Surefire
   in this manner will keep your tests from running twice.  Since the "test" goal of the
-  maven-scalatest-plugin is tied to the test phase by default you do not need to do this explicitly
+  scalatest-maven-plugin is tied to the test phase by default you do not need to do this explicitly
   in your POM.
 
   Optionally, in the reporting section of the POM you can add something like the following:
@@ -61,7 +61,7 @@ Usage Documentation
 
   <plugin>
     <groupId>org.scalatest</groupId>
-    <artifactId>maven-scalatest-plugin</artifactId>
+    <artifactId>scalatest-maven-plugin</artifactId>
     <configuration>
       <fileReporterOptions>...</fileReporterOptions>
     </configuration>
@@ -110,7 +110,7 @@ Usage Documentation
   ...
   <plugin>
     <groupId>org.scalatest</groupId>
-    <artifactId>maven-scalatest-plugin</artifactId>
+    <artifactId>scalatest-maven-plugin</artifactId>
     <executions>
       <execution>
         <goals>
@@ -133,7 +133,7 @@ Usage Documentation
       <plugins>
         <plugin>
           <groupId>org.scalatest</groupId>
-          <artifactId>maven-scalatest-plugin</artifactId>
+          <artifactId>scalatest-maven-plugin</artifactId>
           <executions>
             <execution>
               <goals>

@@ -2,16 +2,11 @@ package org.scalatest.tools.maven;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.CommandLineTimeOutException;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.StreamConsumer;
+import org.codehaus.plexus.util.cli.*;
 
-import static java.lang.String.format;
+import static java.util.Collections.unmodifiableList;
 import static org.scalatest.tools.maven.MojoUtils.*;
 
 import java.io.*;
@@ -28,6 +23,14 @@ import java.net.URLClassLoader;
 import java.net.URL;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.scalatest.tools.maven.MojoUtils.*;
 
 /**
  * Provides the base for all mojos.
@@ -271,7 +274,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
         final Commandline cli = new Commandline();
         cli.setWorkingDirectory(project.getBasedir());
-        cli.setExecutable("java");
+        cli.setExecutable(getJvm());
 
         // Set up environment
         if (environmentVariables != null) {
@@ -284,10 +287,10 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         // Set up system properties
         if (systemProperties != null) {
             for (final Map.Entry<String, String> entry : systemProperties.entrySet()) {
-                cli.createArg().setValue(format("-D%s=%s", entry.getKey(), entry.getValue()));
+                cli.createArg().setValue(String.format("-D%s=%s", entry.getKey(), entry.getValue()));
             }
         }
-        cli.createArg().setValue(format("-Dbasedir=%s", project.getBasedir().getAbsolutePath()));
+        cli.createArg().setValue(String.format("-Dbasedir=%s", project.getBasedir().getAbsolutePath()));
 
         // Set user specified JVM arguments
         if (argLine != null) {
@@ -323,7 +326,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             return result == 0;
         }
         catch (final CommandLineTimeOutException e) {
-            throw new MojoFailureException(format("Timed out after %d seconds waiting for forked process to complete.", forkedProcessTimeoutInSeconds));
+            throw new MojoFailureException(String.format("Timed out after %d seconds waiting for forked process to complete.", forkedProcessTimeoutInSeconds));
         }
         catch (final CommandLineException e) {
             throw new MojoFailureException("Exception while executing forked process.", e);
@@ -347,7 +350,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
     private String forkedProcessDebuggingArguments() {
         if (debugArgLine == null) {
-            return format("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=%s", debuggerPort);
+            return String.format("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=%s", debuggerPort);
         } else {
             return debugArgLine;
         }
@@ -399,7 +402,8 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
     // This is the configuration parameters shared by all concrete Mojo subclasses
     List<String> sharedConfiguration() {
-        return new ArrayList<String>() {{
+        return unmodifiableList(
+            new ArrayList<String>() {{
             addAll(runpath());
             addAll(config());
             addAll(tagsToInclude());
@@ -415,7 +419,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             addAll(testsFiles());
             addAll(junitClasses());
             addAll(spanScaleFactor());
-        }};
+        }});
     }
 
     private List<String> config() {
@@ -423,7 +427,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         for(String pair : splitOnComma(config)){
             c.add("-D"+pair);
         }
-        return c;
+        return unmodifiableList(c);
     }
 
     private List<String> runpath() {
@@ -433,13 +437,13 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         String outputPath = outputDirectory.getAbsolutePath();
         if(outputPath.contains(" ")) {
             outputPath = outputPath.replaceAll(" ","\\\\ ");
-            getLog().debug(format("Escaped output directory path: %s", outputPath));
+            getLog().debug(String.format("Escaped output directory path: %s", outputPath));
         }
 
         String testOutputPath = testOutputDirectory.getAbsolutePath();
         if(testOutputPath.contains(" ")) {
             testOutputPath = testOutputPath.replaceAll(" ","\\\\ ");
-            getLog().debug(format("Escaped test output directory path: %s", testOutputPath));
+            getLog().debug(String.format("Escaped test output directory path: %s", testOutputPath));
         }
 
         return compoundArg("-R",
@@ -450,11 +454,11 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
     private void checkRunpathArgument(File directory) {
         if(!directory.exists()) {
-            getLog().warn(format("Runpath directory does not exist: %s", directory.getAbsolutePath()));
+            getLog().warn(String.format("Runpath directory does not exist: %s", directory.getAbsolutePath()));
         } else if(!directory.isDirectory()) {
-            getLog().warn(format("Runpath argument is not a directory: %s", directory.getAbsolutePath()));
+            getLog().warn(String.format("Runpath argument is not a directory: %s", directory.getAbsolutePath()));
         } else if(!directory.canRead()) {
-            getLog().warn(format("Runpath directory is not readable: %s", directory.getAbsolutePath()));
+            getLog().warn(String.format("Runpath directory is not readable: %s", directory.getAbsolutePath()));
         }
     }
 
@@ -467,7 +471,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> parallel() {
-        return parallel ? singletonList("-P") : Collections.<String>emptyList();
+        return parallel ? unmodifiableList(singletonList("-P")) : Collections.<String>emptyList();
     }
 
     //
@@ -495,7 +499,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
                 }
             }
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     //
@@ -562,7 +566,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         for (String test: splitOnComma(tests)) {
             addTest(list, test);
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     private List<String> spanScaleFactor() {
@@ -571,7 +575,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             list.add("-F");
             list.add(spanScaleFactor + "");
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     private List<String> suffixes() {
@@ -603,7 +607,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
                 list.add(param);
             }
         }
-        return list;
+        return unmodifiableList(list);
     }
 
     private List<String> junitClasses() {

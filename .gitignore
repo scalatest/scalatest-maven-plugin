@@ -2,3 +2,7 @@ target/
 
 # Editor files
 .dir-locals.el
+
+# IDE files
+.idea/
+*.iml

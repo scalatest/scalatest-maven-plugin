@@ -39,8 +39,8 @@ To use the ScalaTest Maven plugin, you need to disable SureFire and enable Scala
     <!-- enable scalatest -- >
     <plugin>
       <groupId>org.scalatest</groupId>
-      <artifactId>maven-scalatest-plugin</artifactId>
-      <version>1.0.M2</version>
+      <artifactId>scalatest-maven-plugin</artifactId>
+      <version>2.0.0</version>
       <configuration>
         <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
         <junitxml>.</junitxml>
