@@ -431,8 +431,8 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> runpath() {
-        checkRunpathArgument(outputDirectory);
-        checkRunpathArgument(testOutputDirectory);
+        checkRunpathArgument("Output", outputDirectory);
+        checkRunpathArgument("Test output", testOutputDirectory);
 
         String outputPath = outputDirectory.getAbsolutePath();
         if(outputPath.contains(" ")) {
@@ -452,13 +452,13 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
                 runpath);
     }
 
-    private void checkRunpathArgument(File directory) {
+    private void checkRunpathArgument(String directoryName, File directory) {
         if(!directory.exists()) {
-            getLog().warn(String.format("Runpath directory does not exist: %s", directory.getAbsolutePath()));
+            getLog().warn(String.format("%s directory does not exist: %s", directoryName, directory.getAbsolutePath()));
         } else if(!directory.isDirectory()) {
-            getLog().warn(String.format("Runpath argument is not a directory: %s", directory.getAbsolutePath()));
+            getLog().warn(String.format("%s is not a directory: %s", directoryName, directory.getAbsolutePath()));
         } else if(!directory.canRead()) {
-            getLog().warn(String.format("Runpath directory is not readable: %s", directory.getAbsolutePath()));
+            getLog().warn(String.format("%s directory is not readable: %s", directoryName, directory.getAbsolutePath()));
         }
     }
 
