@@ -20,6 +20,7 @@
     <scala.minor.version>12</scala.minor.version>
     <scala.version>${scala.major.version}.${scala.minor.version}</scala.version>
     <scalatest.version>3.0.1</scalatest.version>
+    <scala.maven.plugin.version>4.3.0</scala.maven.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <build.timestamp>${maven.build.timestamp}</build.timestamp>
@@ -141,7 +142,7 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>4.3.0</version>
+        <version>${scala.maven.plugin.version}</version>
         <configuration>
           <recompileMode>incremental</recompileMode>
           <scalaVersion>${scala.version}</scalaVersion>
