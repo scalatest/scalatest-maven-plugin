@@ -7,6 +7,9 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.cli.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -220,7 +223,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     /**
      * Span scale factor.
      *
-     * @parameter expression="${spanScaleFactor}"
+     * @parameter property="spanScaleFactor" default-value="1.0"
      */
     double spanScaleFactor = 1.0;
 
@@ -302,21 +305,34 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             getLog().debug(commandLogStatement);
         }
 
-        final StreamConsumer streamConsumer = new StreamConsumer() {
-            public void consumeLine(final String line) {
-                System.out.println(line);
-            }
-        };
-        try {
-            final int result = CommandLineUtils.executeCommandLine(cli, streamConsumer, streamConsumer, forkedProcessTimeoutInSeconds);
+        try (
+            final Writer outputWriter = getOutputWriter()
+        ) {
+            final StreamConsumer outputConsumer = new WriterStreamConsumer(outputWriter);
+
+            final int result = CommandLineUtils.executeCommandLine(cli, outputConsumer, outputConsumer,
+                    forkedProcessTimeoutInSeconds);
+
             return result == 0;
         }
         catch (final CommandLineTimeOutException e) {
-            throw new MojoFailureException(String.format("Timed out after %d seconds waiting for forked process to complete.", forkedProcessTimeoutInSeconds));
+            throw new MojoFailureException(String.format("Timed out after %d seconds waiting for forked process to complete.", forkedProcessTimeoutInSeconds), e);
         }
         catch (final CommandLineException e) {
             throw new MojoFailureException("Exception while executing forked process.", e);
         }
+        catch (IOException e) {
+            throw new MojoFailureException("Unable to close the output writer ", e);
+        }
+    }
+
+    protected Writer getOutputWriter() throws MojoFailureException {
+        return new PrintWriter(System.out) {
+            @Override
+            public void close() {
+                out = null; // System.out should stay open
+            }
+        };
     }
 
     private String buildClassPathEnvironment() {

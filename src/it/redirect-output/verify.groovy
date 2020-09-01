@@ -1,8 +1,9 @@
 
-def logsFile = new File(basedir, "build.log")
+def reportsDir = new File(basedir, "target" + File.separator + "scalatest-reports")
+def logsFile = new File(reportsDir,  "scalatest-output.txt")
 
 if (!logsFile.exists()) {
-  throw new Exception("Could not find build.log.  Searched: " + logsFile)
+  throw new Exception("Could not find output.txt.  Searched: " + logsFile)
 }
 
 def testSummaryLines = []
@@ -12,15 +13,15 @@ logsFile.filterLine {
 }.each { line -> testSummaryLines << "" + line }
 
 if (testSummaryLines.size == 0) {
-  throw new Exception("Could not find scalatest's summary line in build.log")
+  throw new Exception("Could not find scalatest's summary line in output.txt")
 } else if (testSummaryLines.size > 1) {
-  throw new Exception("Found more than one scalatest summary line in build.log")
+  throw new Exception("Found more than one scalatest summary line in output.txt")
 }
 
 def theLine = testSummaryLines[0]
 
 if (theLine.isEmpty()) {
-  throw new Exception("Could not find scalatest's non empty summary line in build.log")
+  throw new Exception("Could not find scalatest's non-empty summary line in output.txt")
 }
 
 if (theLine.contains("Tests: succeeded 0, failed 0, canceled 0, ignored 0, pending 0")) {
