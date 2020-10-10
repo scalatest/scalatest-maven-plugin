@@ -147,4 +147,8 @@ final class MojoUtils {
         }
         return result;
     }
+
+    static String stripNewLines(String argLine) {
+        return argLine.replaceAll("[\r\n]{1,2}", " ");
+    }
 }

@@ -6,21 +6,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.cli.*;
 
-import static java.util.Collections.unmodifiableList;
-import static org.scalatest.tools.maven.MojoUtils.*;
-
-import java.io.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-
-import static java.util.Collections.singletonList;
-
-import java.net.MalformedURLException;
-import java.net.URLClassLoader;
-import java.net.URL;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -29,7 +15,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static java.util.Collections.unmodifiableList;
 import static org.scalatest.tools.maven.MojoUtils.*;
 
 /**
@@ -294,12 +280,12 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
         // Set user specified JVM arguments
         if (argLine != null) {
-            cli.createArg().setLine(argLine);
+            cli.createArg().setLine(stripNewLines(argLine));
         }
 
         // Set debugging JVM arguments if debugging is enabled
         if (debugForkedProcess) {
-            cli.createArg().setLine(forkedProcessDebuggingArguments());
+            cli.createArg().setLine(stripNewLines(forkedProcessDebuggingArguments()));
         }
 
         // Set ScalaTest arguments

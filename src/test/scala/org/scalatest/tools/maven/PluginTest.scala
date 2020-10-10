@@ -208,4 +208,14 @@ final class PluginTest
     MojoUtils.compoundArg("-a", comma("a", "b", "c")) should be(jlist("-a", "a b c"))
     MojoUtils.compoundArg("-a", null.asInstanceOf[String]) should be(jlist())
   }
+
+  def testMojoStripNewLines {
+    MojoUtils.stripNewLines("-XmsXg -XmxYg -XX:MaxPermSize=Zm") should be("-XmsXg -XmxYg -XX:MaxPermSize=Zm")
+    MojoUtils.stripNewLines("-XmsXg\n-XmxYg -XX:MaxPermSize=Zm") should be("-XmsXg -XmxYg -XX:MaxPermSize=Zm")
+    MojoUtils.stripNewLines("-XmsXg\n-XmxYg") should be("-XmsXg -XmxYg")
+    MojoUtils.stripNewLines("-XmsXg\r-XmxYg -XX:MaxPermSize=Zm") should be("-XmsXg -XmxYg -XX:MaxPermSize=Zm")
+    MojoUtils.stripNewLines("-XmsXg\r-XmxYg") should be("-XmsXg -XmxYg")
+    MojoUtils.stripNewLines("-XmsXg\r\n-XmxYg -XX:MaxPermSize=Zm") should be("-XmsXg -XmxYg -XX:MaxPermSize=Zm")
+    MojoUtils.stripNewLines("-XmsXg\r\n-XmxYg") should be("-XmsXg -XmxYg")
+  }
 }
