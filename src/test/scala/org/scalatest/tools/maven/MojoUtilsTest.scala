@@ -38,6 +38,6 @@ class MojoUtilsTest {
   def getJvmJavaHomeIsPriority(): Unit = {
     System.setProperty("java.home", "/test/jvm")
     env.set("JAVA_HOME", "/opt/jdk-11")
-    assert(MojoUtils.getJvm == "/opt/jdk-11/bin/java")
+    assert(MojoUtils.getJvm == "/test/jvm/bin/java")
   }
 }
