@@ -6,3 +6,5 @@ target/
 # IDE files
 .idea/
 *.iml
+
+pom.xml.asc
