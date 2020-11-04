@@ -127,10 +127,11 @@ final class MojoUtils {
 
     private static String getJavaHome() {
         final String result;
-        if (!isEmpty(System.getenv("JAVA_HOME"))) {
-            result = System.getenv("JAVA_HOME");
-        } else if (!isEmpty(System.getProperty("java.home"))) {
+        if (!isEmpty(System.getProperty("java.home"))) {
             result = System.getProperty("java.home");
+        }
+        else if (!isEmpty(System.getenv("JAVA_HOME"))) {
+            result = System.getenv("JAVA_HOME");
         } else {
             result = null;
         }
