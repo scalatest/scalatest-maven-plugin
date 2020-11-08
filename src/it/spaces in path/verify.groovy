@@ -17,7 +17,13 @@ if (testSummaryLines.size == 0) {
   throw new Exception("Found more than one scalatest summary line in build.log")
 }
 
-if (testSummaryLines[0].contains("Tests: succeeded 0, failed 0, canceled 0, ignored 0, pending 0")) {
+def theLine = testSummaryLines[0]
+
+if (theLine.isEmpty()) {
+  throw new Exception("Could not find scalatest's non empty summary line in build.log")
+}
+
+if (theLine.contains("Tests: succeeded 0, failed 0, canceled 0, ignored 0, pending 0")) {
   throw new Exception("No tests were run by scalatest!")
 }
 
