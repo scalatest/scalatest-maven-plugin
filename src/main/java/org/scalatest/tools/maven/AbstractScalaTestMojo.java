@@ -224,6 +224,13 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
      */
     double spanScaleFactor = 1.0;
 
+    /**
+     * The current working directory for forked process. Optional. If not specified, basedir will be used.
+     *
+     * @parameter property="workingDirectory"
+     */
+    String workingDirectory;
+
     // runScalaTest is called by the concrete mojo subclasses  TODO: make it protected and others too
     // Returns true if all tests pass
     boolean runScalaTest(String[] args) throws MojoFailureException {
@@ -259,7 +266,11 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     private boolean runForkingOnce(String[] args) throws MojoFailureException {
 
         final Commandline cli = new Commandline();
-        cli.setWorkingDirectory(project.getBasedir());
+        if ((this.workingDirectory == null || this.workingDirectory.isEmpty())) {
+            cli.setWorkingDirectory(project.getBasedir());
+        } else {
+            cli.setWorkingDirectory(workingDirectory);
+        }
         cli.setExecutable(getJvm());
 
         // Set up environment
