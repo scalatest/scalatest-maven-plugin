@@ -16,6 +16,7 @@
   <version>2.0.2</version>
   <name>ScalaTest Maven Plugin</name>
   <description>Integrates ScalaTest into Maven</description>
+  <url>https://www.scalatest.org/user_guide/using_the_scalatest_maven_plugin</url>
 
   <properties>
     <scala.major.version>2.11</scala.major.version>
