@@ -102,12 +102,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.scalatest</groupId>
-      <artifactId>scalatest-shouldmatchers_${scala.major.version}</artifactId>
-      <version>${scalatest.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.scalatestplus</groupId>
       <artifactId>junit-4-13_${scala.major.version}</artifactId>
       <version>${scalatest.version}.0</version>
