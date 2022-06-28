@@ -1,8 +1,8 @@
 package org.scalatest.tools.maven
 
 import java.io.File
-import org.scalatest.Matchers
-import org.scalatest.junit.JUnit3Suite
+import org.scalatest.matchers.should.Matchers
+import org.scalatestplus.junit.JUnit3Suite
 import java.util.ArrayList
 import org.scalatest.BeforeAndAfterAll
 
