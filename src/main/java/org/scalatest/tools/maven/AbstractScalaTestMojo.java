@@ -220,7 +220,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     /**
      * Span scale factor.
      *
-     * @parameter expression="${spanScaleFactor}"
+     * @parameter property="${spanScaleFactor}"
      */
     double spanScaleFactor = 1.0;
 
