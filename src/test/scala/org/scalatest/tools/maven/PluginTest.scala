@@ -28,7 +28,7 @@ final class PluginTest
     dir.getAbsolutePath
   }
 
-  override def afterAll {
+  override def afterAll() {
     def delete(it: File) {
       if (it.isFile) {
         it.delete()
