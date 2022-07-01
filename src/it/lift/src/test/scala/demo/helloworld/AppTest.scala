@@ -1,7 +1,7 @@
 package demo.helloworld
 
 import _root_.java.io.File
-import _root_.org.scalatest.FunSuite
+import _root_.org.scalatest.funsuite.AnyFunSuite
 import _root_.scala.xml.XML
 import _root_.net.liftweb.common.Full
 import _root_.net.liftweb.util.PCDataXmlParser
@@ -9,7 +9,7 @@ import _root_.net.liftweb.util.PCDataXmlParser
 /**
  * Unit test for simple App.
  */
-class AppTest extends FunSuite {
+class AppTest extends AnyFunSuite {
 
   /**
    * Rigourous Tests :-)

@@ -9,7 +9,7 @@
   <description>Runs the plugin against a basic Lift application.</description>
 
   <properties>
-    <lift.version>2.6.3</lift.version>
+    <lift.version>3.5.0</lift.version>
   </properties>
 
   <parent>
