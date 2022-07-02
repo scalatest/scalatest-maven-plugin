@@ -194,6 +194,7 @@
           <pomIncludes>
             <pomInclude>lift/pom.xml</pomInclude>
             <pomInclude>spaces in path/pom.xml</pomInclude>
+            <pomInclude>no-scalatest-ignore/pom.xml</pomInclude>
           </pomIncludes>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <streamLogs>true</streamLogs>
