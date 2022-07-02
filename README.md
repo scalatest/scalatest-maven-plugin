@@ -55,3 +55,18 @@ To use the ScalaTest Maven plugin, you need to disable SureFire and enable Scala
         </execution>
       </executions>
     </plugin>
+
+Ignore When ScalaTest Not Available
+-----------------------------------
+
+This plugin expects the you to include ScalaTest dependency used by the your project.  By default, if you do not include a ScalaTest dependency, 
+this plugin will fail the build, if you would like to ignore or skip running this plugin when ScalaTest is not in the classpath, you can set 
+**noScalaTestIgnore** to **true** in configuration like this: 
+
+```
+...
+<configuration>
+  <noScalaTestIgnore>true</noScalaTestIgnore>
+</configuration>
+...
+```
