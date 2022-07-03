@@ -1,15 +1,18 @@
 package org.scalatest.tools.maven;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import static org.scalatest.tools.maven.MojoUtils.*;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
-import java.util.List;
-import java.util.ArrayList;
+import static org.scalatest.tools.maven.MojoUtils.*;
 
 /**
  * Provides a bridge between Maven and the command-line form of ScalaTest's Runner.
@@ -107,7 +110,26 @@ public class TestMojo extends AbstractScalaTestMojo {
      */
     String stderr;
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    /**
+     * Set this to "true" to redirect the unit test standard output to a file
+     * (found in reportsDirectory/scalatest-output.txt by default).
+     * <p>
+     * NOTE: Works only if forkMode="once"
+     *
+     * @parameter property="maven.test.redirectTestOutputToFile" default-value="false"
+     */
+    boolean redirectTestOutputToFile;
+
+    /**
+     * Name of the file where the test output is redirected if enabled
+     *
+     * @parameter default-value="scalatest-output.txt"
+     */
+    String testOutputFileName;
+
+    public void execute() throws MojoFailureException {
+        getLog().info("ScalaTest report directory: " + reportsDirectory);
+
         if (skipTests) {
             getLog().info("Tests are skipped.");
         } 
@@ -142,11 +164,30 @@ public class TestMojo extends AbstractScalaTestMojo {
     // These private methods create the relevant portion of the command line
     // to pass to Runner based on the corresponding Maven configuration parameter.
     private List<String> stdout() {
-        return unmodifiableList(singletonList(stdout == null ? "-o" : "-o" + stdout));
+        final String stdoutProcessed = maybeRemoveAnsiCodes(stdout);
+        return unmodifiableList(singletonList(stdoutProcessed == null ? "-o" : "-o" + stdoutProcessed));
     }
 
     private List<String> stderr() {
         return stderr == null ? Collections.<String>emptyList() : unmodifiableList(singletonList("-e" + stderr));
+    }
+
+    private String maybeRemoveAnsiCodes(String streamParams) {
+        return redirectTestOutputToFile
+                ? maybeAppendLetter(streamParams, "W")
+                : streamParams;
+    }
+
+    private String maybeAppendLetter(String string, String letter) {
+        if (string == null) {
+            return letter;
+        }
+
+        if (string.contains(letter)) {
+            return string;
+        }
+
+        return string + letter;
     }
 
     private List<String> filereports() {
@@ -178,5 +219,23 @@ public class TestMojo extends AbstractScalaTestMojo {
 
     private List<String> junitxml(){
         return reporterArg("-u", junitxml, dirRelativeTo(reportsDirectory));
+    }
+
+    protected Writer getOutputWriter() throws MojoFailureException {
+        return redirectTestOutputToFile ? newFileWriter() : super.getOutputWriter();
+    }
+
+    private Writer newFileWriter() throws MojoFailureException {
+        final File outputFile = new File(reportsDirectory, testOutputFileName);
+
+        if (!reportsDirectory.exists() && !reportsDirectory.mkdirs()) {
+            throw new MojoFailureException("Unable to create directory path: " + reportsDirectory);
+        }
+
+        try {
+            return new FileWriter(outputFile);
+        } catch (IOException e) {
+            throw new MojoFailureException("Unable to access the output file: '" + outputFile + "'", e);
+        }
     }
 }

@@ -102,6 +102,10 @@ final class PluginTest
     configure(_.stdout = "GUP") should contain("-oGUP")
   }
 
+  def testStdOutReporterWithRedirect {
+    configure(_.redirectTestOutputToFile = true) should contain("-oW")
+  }
+
   def testStdErrReporter {
     configure(_.stderr = "BIS") should contain("-eBIS")
   }

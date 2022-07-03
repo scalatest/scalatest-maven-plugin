@@ -70,3 +70,24 @@ this plugin will fail the build, if you would like to ignore or skip running thi
 </configuration>
 ...
 ```
+
+Deploying to Sonatype
+---------------------
+
+Add the following into settings.xml (please replace username and password): 
+
+```
+<servers>
+  <server>
+    <id>sonatype-nexus-staging</id>
+    <username>xxx</username>
+    <password>yyy</password>
+  </server>
+</servers>
+```
+
+Then run the following command: 
+
+```
+> mvn clean deploy -Dmaven.test.skip=true
+```
