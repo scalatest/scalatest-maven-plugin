@@ -15,6 +15,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '8'
+          distribution: 'temurin'
 
       - name: maven
         run: mvn -B clean verify --file pom.xml
