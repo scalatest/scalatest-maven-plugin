@@ -55,3 +55,24 @@ To use the ScalaTest Maven plugin, you need to disable SureFire and enable Scala
         </execution>
       </executions>
     </plugin>
+
+Deploying to Sonatype
+---------------------
+
+Add the following into settings.xml (please replace username and password): 
+
+```
+<servers>
+  <server>
+    <id>sonatype-nexus-staging</id>
+    <username>xxx</username>
+    <password>yyy</password>
+  </server>
+</servers>
+```
+
+Then run the following command: 
+
+```
+> mvn clean deploy -Dmaven.test.skip=true
+```
