@@ -144,7 +144,10 @@ public class TestMojo extends AbstractScalaTestMojo {
         }
         else {
             if (!runScalaTest(configuration()) && !testFailureIgnore) {
-                throw new MojoFailureException("There are test failures");
+                if (isScalaTestAvailable())
+                  throw new MojoFailureException("There are test failures");
+                else
+                  throw new MojoFailureException("Failure because ScalaTest not available on classpath.");  
             }
         }
     }
