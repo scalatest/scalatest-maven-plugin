@@ -89,5 +89,5 @@ Add the following into settings.xml (please replace username and password):
 Then run the following command: 
 
 ```
-> mvn clean deploy -Dmaven.test.skip=true
+> mvn clean deploy -Prelease -Dmaven.test.skip=true
 ```
