@@ -234,6 +234,12 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
      */
     String workingDirectory;
 
+    /**
+     * Option to specify an alternative path to JVM (or path to the java executable) to use with
+     * the forked process.
+     */
+    String jvm;
+
     // runScalaTest is called by the concrete mojo subclasses  TODO: make it protected and others too
     // Returns true if all tests pass
     boolean runScalaTest(String[] args) throws MojoFailureException {
@@ -274,7 +280,12 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         } else {
             cli.setWorkingDirectory(workingDirectory);
         }
-        cli.setExecutable(getJvm());
+
+        if (this.jvm == null || this.jvm.isEmpty()) {
+            cli.setExecutable(getJvm());
+        } else {
+            cli.setExecutable(this.jvm);
+        }
 
         // Set up environment
         if (environmentVariables != null) {
