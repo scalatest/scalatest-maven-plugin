@@ -237,6 +237,8 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     /**
      * Option to specify an alternative path to JVM (or path to the java executable) to use with
      * the forked process.
+     *
+     * @parameter property="jvm"
      */
     String jvm;
 
