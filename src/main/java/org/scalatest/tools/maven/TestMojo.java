@@ -49,6 +49,12 @@ public class TestMojo extends AbstractScalaTestMojo {
     boolean testFailureIgnore;
 
     /**
+     * Set to true to avoid failing the build when ScalaTest is not available on classpath
+     * @parameter property="noScalaTestIgnore"
+     */
+    boolean noScalaTestIgnore;
+
+    /**
      * Comma separated list of filereporters. A filereporter consists of an optional
      * configuration and a mandatory filename, separated by a whitespace. E.g <code>all.txt,XE ignored_and_pending.txt</code>
      * For more info on configuring reporters, see the scalatest documentation.
@@ -126,9 +132,22 @@ public class TestMojo extends AbstractScalaTestMojo {
 
         if (skipTests) {
             getLog().info("Tests are skipped.");
-        } else {
+        } 
+        else if (noScalaTestIgnore) {
+            if (isScalaTestAvailable()) {
+                if (!runScalaTest(configuration()) && !testFailureIgnore) {
+                    throw new MojoFailureException("There are test failures");
+                }
+            }
+            else 
+                getLog().info("Skipped because ScalaTest not available on classpath.");
+        }
+        else {
             if (!runScalaTest(configuration()) && !testFailureIgnore) {
-                throw new MojoFailureException("There are test failures");
+                if (isScalaTestAvailable())
+                  throw new MojoFailureException("There are test failures");
+                else
+                  throw new MojoFailureException("Failure because ScalaTest not available on classpath.");  
             }
         }
     }

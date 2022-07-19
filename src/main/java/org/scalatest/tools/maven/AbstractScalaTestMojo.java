@@ -369,6 +369,16 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
         }
     }
 
+    protected boolean isScalaTestAvailable() {
+        try {
+            classLoader().loadClass("org.scalatest.tools.Runner");
+            return true;
+        }
+        catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
     // This is just used by runScalaTest to get the method to invoke
     private Method run() {
         try {
