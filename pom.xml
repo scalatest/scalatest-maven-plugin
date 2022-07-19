@@ -19,11 +19,10 @@
   <url>https://www.scalatest.org/user_guide/using_the_scalatest_maven_plugin</url>
 
   <properties>
-    <scala.major.version>2.11</scala.major.version>
-    <scala.minor.version>12</scala.minor.version>
+    <scala.major.version>2.12</scala.major.version>
+    <scala.minor.version>16</scala.minor.version>
     <scala.version>${scala.major.version}.${scala.minor.version}</scala.version>
-
-    <scalatest.version>3.0.1</scalatest.version>
+    <scalatest.version>3.2.12</scalatest.version>
     <scala.maven.plugin.version>4.3.0</scala.maven.plugin.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -103,15 +102,21 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>${scala.major.version}.${scala.minor.version}</version>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest-shouldmatchers_${scala.major.version}</artifactId>
+      <version>${scalatest.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <groupId>org.scalatestplus</groupId>
+      <artifactId>junit-4-13_${scala.major.version}</artifactId>
+      <version>${scalatest.version}.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.major.version}.${scala.minor.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
