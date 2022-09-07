@@ -123,6 +123,50 @@ final class PluginTest
     configure(_.parallel = false) should not contain ("-P")
   }
 
+  def testConcurrentSuiteSorting {
+    configure { m => 
+      m.parallel = true
+      m.suiteSorting = true
+    } should containSlice("-PS")
+  }
+
+  def testConcurrentThreadCount {
+    configure { m => 
+      m.parallel = true
+      m.threadCount = 4
+    } should containSlice("-P4")
+  }
+
+  def testConcurrentSuiteSortingThreadCount {
+    configure { m => 
+      m.parallel = true
+      m.suiteSorting = true
+      m.threadCount = 4
+    } should containSlice("-PS4")
+  }
+
+  def testSuiteSorting {
+    // Suite sorting count should have no effect if parallel is not set to true.
+    configure { m =>
+      m.suiteSorting = true
+    } shouldNot containSlice ("-PS")
+  }
+
+  def testSuiteSortingThreadCount {
+    // Suite sorting and thread count should have no effect if parallel is not set to true.
+    configure { m =>
+      m.suiteSorting = true
+      m.threadCount = 4
+    } shouldNot containSlice ("-PS4")
+  }
+
+  def testThreadCount {
+    // Thread count should have no effect if parallel is not set to true.
+    configure { m =>
+      m.threadCount = 4
+    } shouldNot containSlice ("-P4")
+  }
+
   def testSuites {
     val suites: String = comma(" a ",
                                "b",

@@ -109,6 +109,18 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     boolean parallel;
 
     /**
+     * Set to true to enable suite sorting, this only takes effect if parallel is set to true. 
+     * @parameter property="suiteSorting"
+     */
+    boolean suiteSorting;
+
+    /**
+     * Set the thread count for parallel tests execution, this only takes effect if parallel is set to true. 
+     * @parameter property="threadCount"
+     */
+    int threadCount;
+
+    /**
      * Comma separated list of packages containing suites to execute
      * @parameter property="membersOnlySuites"
      */
@@ -507,7 +519,13 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     }
 
     private List<String> parallel() {
-        return parallel ? unmodifiableList(singletonList("-P")) : Collections.<String>emptyList();
+        if (parallel) {
+            String useSuiteSorting = suiteSorting ? "S" : "";
+            String useThreadCount = threadCount == 0 ? "" : ("" + threadCount);
+            return unmodifiableList(singletonList("-P" + useSuiteSorting + useThreadCount));
+        }
+        else
+            return Collections.<String>emptyList();
     }
 
     //
