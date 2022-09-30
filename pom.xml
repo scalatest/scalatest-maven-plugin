@@ -20,9 +20,9 @@
 
   <properties>
     <scala.major.version>2.12</scala.major.version>
-    <scala.minor.version>16</scala.minor.version>
+    <scala.minor.version>17</scala.minor.version>
     <scala.version>${scala.major.version}.${scala.minor.version}</scala.version>
-    <scalatest.version>3.2.12</scalatest.version>
+    <scalatest.version>3.2.14</scalatest.version>
     <scala.maven.plugin.version>4.3.0</scala.maven.plugin.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

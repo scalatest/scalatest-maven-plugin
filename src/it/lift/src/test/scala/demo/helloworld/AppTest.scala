@@ -43,9 +43,14 @@ class AppTest extends AnyFunSuite {
 
       if (file.isFile && handledXml(file.getName)) {
         try {
-          XML.loadFile(file)
+          val f = javax.xml.parsers.SAXParserFactory.newInstance()
+          f.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+          val p = f.newSAXParser()
+          XML.withSAXParser(p).loadFile(file)
         } catch {
-          case e: _root_.org.xml.sax.SAXParseException => failed = file :: failed
+          case e: _root_.org.xml.sax.SAXParseException => 
+            e.printStackTrace()
+            failed = file :: failed
         }
       }
       if (file.isFile && handledXHtml(file.getName)) {
