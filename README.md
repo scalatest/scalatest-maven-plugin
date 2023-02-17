@@ -27,7 +27,7 @@ Using ScalaTest Maven Plugin
 
 To use the ScalaTest Maven plugin, you need to disable SureFire and enable ScalaTest. Here's an example of how to do this in your pom.xml: 
 
-    <!-- disable surefire -- >
+    <!-- disable surefire -->
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-surefire-plugin</artifactId>
@@ -36,7 +36,7 @@ To use the ScalaTest Maven plugin, you need to disable SureFire and enable Scala
         <skipTests>true</skipTests>
       </configuration>
     </plugin>
-    <!-- enable scalatest -- >
+    <!-- enable scalatest -->
     <plugin>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest-maven-plugin</artifactId>
