@@ -160,6 +160,12 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     String jUnitClasses;
 
     /**
+     * Set the seed used by generators of property-driven tests. 
+     * @parameter property="seed"
+     */
+    String seed;
+
+    /**
      * Option to specify the forking mode. Can be "never" or "once". "always", which would
      * fork for each test-class, may be supported later.
      *
@@ -467,6 +473,7 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
             addAll(testsFiles());
             addAll(junitClasses());
             addAll(spanScaleFactor());
+            addAll(seed());
         }});
     }
 
@@ -666,5 +673,20 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
     private List<String> junitClasses() {
         return suiteArg("-j", jUnitClasses);
+    }
+
+    private List<String> seed() {
+        List<String> list = new ArrayList<String>();
+        if (seed != null) {
+            try {
+                Long.parseLong(seed);
+                list.add("-S");
+                list.add(seed);
+            }
+            catch (NumberFormatException e) {
+                throw new RuntimeException("Invalid seed value: " + seed);
+            }
+        }
+        return unmodifiableList(list);
     }
 }
