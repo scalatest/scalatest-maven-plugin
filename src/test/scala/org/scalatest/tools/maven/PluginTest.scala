@@ -235,6 +235,12 @@ final class PluginTest
     configure(_.memoryFiles = comma("a", "b", "c")) should containSuiteArgs("-M", "a", "b", "c")
   }
 
+  def testSeed {
+    configure { m => 
+      m.seed = "1234567890"
+    } should containSlice("-S", "1234567890")
+  }
+
   def testTestsFiles {
     configure(_.testsFiles = comma("nonesuch", "pom.xml", "src")) should containSuiteArgs("-A", "pom.xml", "src")
   }
@@ -266,4 +272,5 @@ final class PluginTest
     MojoUtils.stripNewLines("-XmsXg\r\n-XmxYg -XX:MaxPermSize=Zm") should be("-XmsXg -XmxYg -XX:MaxPermSize=Zm")
     MojoUtils.stripNewLines("-XmsXg\r\n-XmxYg") should be("-XmsXg -XmxYg")
   }
+
 }
