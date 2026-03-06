@@ -127,6 +127,13 @@ public class TestMojo extends AbstractScalaTestMojo {
      */
     String testOutputFileName;
 
+    @Override
+    protected void validateForkModeConfiguration() throws MojoFailureException {
+        if (redirectTestOutputToFile && "always".equals(forkMode)) {
+            throw new MojoFailureException("redirectTestOutputToFile is not supported when forkMode is set to \"always\".");
+        }
+    }
+
     public void execute() throws MojoFailureException {
         getLog().info("ScalaTest report directory: " + reportsDirectory);
 

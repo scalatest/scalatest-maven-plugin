@@ -160,8 +160,9 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     String jUnitClasses;
 
     /**
-     * Option to specify the forking mode. Can be "never" or "once". "always", which would
-     * fork for each test-class, may be supported later.
+     * Option to specify the forking mode. Can be "never", "once", or "always".
+     * "always" behaves similarly to Surefire's always mode and forks once per
+     * explicit suite or JUnit class.
      *
      * @parameter property="forkMode" default-value="once"
      */
@@ -258,19 +259,25 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
     // Returns true if all tests pass
     boolean runScalaTest(String[] args) throws MojoFailureException {
         getLog().debug(Arrays.toString(args));
+        validateForkModeConfiguration();
+
         if (forkMode.equals("never")) {
             return runWithoutForking(args);
         }
+        else if (forkMode.equals("once")) {
+            return runForkingOnce(args);
+        }
+        else if (forkMode.equals("always")) {
+            return runForkingAlways(args);
+        }
         else {
-            if (!forkMode.equals("once")) {
-                getLog().error("Invalid forkMode: \"" + forkMode + "\"; Using once instead.");
-            }
+            getLog().error("Invalid forkMode: \"" + forkMode + "\"; Using once instead.");
             return runForkingOnce(args);
         }
     }
 
     // Returns true if all tests pass
-    private boolean runWithoutForking(String[] args) {
+    protected boolean runWithoutForking(String[] args) {
         try {
             return (Boolean) run().invoke(null, new Object[]{args});
         } catch (IllegalAccessException e) {
@@ -287,6 +294,119 @@ abstract class AbstractScalaTestMojo extends AbstractMojo {
 
     // Returns true if all tests pass
     private boolean runForkingOnce(String[] args) throws MojoFailureException {
+        return runForkedProcess(args);
+    }
+
+    // Returns true if all tests pass
+    private boolean runForkingAlways(String[] args) throws MojoFailureException {
+        List<String[]> forkedRuns = forkModeAlwaysArgs(args);
+        boolean allPassed = true;
+
+        for (String[] forkedRunArgs : forkedRuns) {
+            if (!runForkedProcess(forkedRunArgs)) {
+                allPassed = false;
+            }
+        }
+
+        return allPassed;
+    }
+
+    protected void validateForkModeConfiguration() throws MojoFailureException {
+    }
+
+    private List<String[]> forkModeAlwaysArgs(String[] args) throws MojoFailureException {
+        List<String[]> forkedRuns = new ArrayList<String[]>();
+        List<String> explicitSuites = splitOnComma(suites);
+        List<String> explicitJUnitClasses = splitOnComma(jUnitClasses);
+
+        validateAlwaysSupported(explicitSuites, explicitJUnitClasses);
+
+        String[] sharedArgs = removeAlwaysExecutionUnitArgs(args);
+
+        for (String suite : explicitSuites) {
+            List<String> forkedArgs = new ArrayList<String>(Arrays.asList(sharedArgs));
+            appendSuiteArgs(forkedArgs, suite);
+            forkedRuns.add(forkedArgs.toArray(new String[forkedArgs.size()]));
+        }
+
+        for (String jUnitClass : explicitJUnitClasses) {
+            List<String> forkedArgs = new ArrayList<String>(Arrays.asList(sharedArgs));
+            forkedArgs.add("-j");
+            forkedArgs.add(jUnitClass);
+            forkedRuns.add(forkedArgs.toArray(new String[forkedArgs.size()]));
+        }
+
+        return forkedRuns;
+    }
+
+    private void validateAlwaysSupported(List<String> explicitSuites, List<String> explicitJUnitClasses) throws MojoFailureException {
+        if (!splitOnComma(tests).isEmpty()
+                || !splitOnComma(suffixes).isEmpty()
+                || !splitOnComma(membersOnlySuites).isEmpty()
+                || !splitOnComma(wildcardSuites).isEmpty()
+                || !splitOnComma(testNGConfigFiles).isEmpty()
+                || !splitOnComma(testsFiles).isEmpty()) {
+            throw new MojoFailureException("forkMode \"always\" supports only explicit suites and JUnit classes in this version.");
+        }
+
+        if (explicitSuites.isEmpty() && explicitJUnitClasses.isEmpty()) {
+            throw new MojoFailureException("forkMode \"always\" requires at least one explicit suite or JUnit class.");
+        }
+    }
+
+    private String[] removeAlwaysExecutionUnitArgs(String[] args) {
+        List<String> sharedArgs = new ArrayList<String>();
+
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+
+            if ("-s".equals(arg)) {
+                i = skipSuiteSelectorArgs(args, i);
+            }
+            else if ("-j".equals(arg)) {
+                i++;
+            }
+            else {
+                sharedArgs.add(arg);
+            }
+        }
+
+        return sharedArgs.toArray(new String[sharedArgs.size()]);
+    }
+
+    private int skipSuiteSelectorArgs(String[] args, int suiteArgIndex) {
+        int nextIndex = suiteArgIndex + 1; // skip the suite name paired with -s
+
+        if (hasSuiteTestSelector(args, nextIndex)) {
+            nextIndex += 2; // also skip the paired -t/-z and test name
+        }
+
+        return nextIndex;
+    }
+
+    private boolean hasSuiteTestSelector(String[] args, int suiteNameIndex) {
+        int testSelectorIndex = suiteNameIndex + 1;
+        int testNameIndex = suiteNameIndex + 2;
+
+        return testNameIndex < args.length
+                && ("-t".equals(args[testSelectorIndex]) || "-z".equals(args[testSelectorIndex]));
+    }
+
+    private void appendSuiteArgs(List<String> args, String suiteConfig) {
+        SuiteTestPair pair = new SuiteTestPair(suiteConfig);
+
+        if (pair.suite != null) {
+            args.add("-s");
+            args.add(pair.suite);
+
+            if (pair.test != null) {
+                addTest(args, pair.test);
+            }
+        }
+    }
+
+    // Returns true if all tests pass
+    protected boolean runForkedProcess(String[] args) throws MojoFailureException {
 
         final Commandline cli = new Commandline();
         if ((this.workingDirectory == null || this.workingDirectory.isEmpty())) {

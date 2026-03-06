@@ -174,3 +174,20 @@ Usage Documentation
   Instead, this goal has a "fileReporterOptions" option that allows you to specify the formatting options to
   pass to the FileReporter.  The plugin itself controls the name of that file, and the location of the file
   is configured through the standard "reportOutputDirectory" as is convention in report goals of other plugins.
+
+* Fork Mode
+
+  The plugin supports three fork modes:
+
+  [[1]] {{{never}}} runs ScalaTest in the Maven process
+
+  [[2]] {{{once}}} forks one JVM for the whole ScalaTest run
+
+  [[3]] {{{always}}} behaves similarly to Surefire's always mode and forks one JVM per explicit suite or JUnit class
+
+  []
+
+  In this first cut, {{{always}}} is supported only with explicit {{{suites}}} and {{{jUnitClasses}}}
+  configuration. Discovery-style selectors such as {{{membersOnlySuites}}}, {{{wildcardSuites}}},
+  {{{suffixes}}}, {{{tests}}}, {{{testsFiles}}}, and {{{testNGConfigFiles}}} are rejected in this mode.
+  {{{redirectTestOutputToFile}}} is also not supported when {{{forkMode}}} is set to {{{always}}}.

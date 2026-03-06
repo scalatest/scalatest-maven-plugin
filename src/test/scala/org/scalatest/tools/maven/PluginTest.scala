@@ -1,6 +1,7 @@
 package org.scalatest.tools.maven
 
 import java.io.File
+import org.apache.maven.project.MavenProject
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.junit.JUnit3Suite
 import java.util.ArrayList
@@ -30,6 +31,9 @@ final class PluginTest
 
   override def afterAll() {
     def delete(it: File) {
+      if (it == null || !it.exists()) {
+        ()
+      } else
       if (it.isFile) {
         it.delete()
       } else {
@@ -47,11 +51,22 @@ final class PluginTest
 
   def configure(m: TestMojo => Unit) = {
     val mojo = new TestMojo
+    configureForRun(mojo)(m)
+    mojo.configuration
+  }
+
+  def configureForRun[T <: TestMojo](mojo: T)(m: T => Unit): T = {
     mojo.reportsDirectory = reportsDirectory
     mojo.testOutputDirectory = new File(testOutputDirectory)
     mojo.outputDirectory = new File(outputDirectory)
+    baseDir.mkdirs()
+    val pomFile = new File(baseDir, "pom.xml")
+    pomFile.createNewFile()
+    val project = new MavenProject
+    project.setFile(pomFile)
+    mojo.project = project
     m(mojo)
-    mojo.configuration
+    mojo
   }
 
   def testDefault {
@@ -104,6 +119,78 @@ final class PluginTest
 
   def testStdOutReporterWithRedirect {
     configure(_.redirectTestOutputToFile = true) should contain("-oW")
+  }
+
+  def testForkModeAlwaysSplitsExplicitSuitesAndJUnitClasses {
+    val mojo = new RecordingTestMojo
+    configureForRun(mojo) { m =>
+      m.forkMode = "always"
+      m.suites = comma("org.example.FirstSuite", "org.example.SecondSuite @focused test")
+      m.jUnitClasses = comma("org.example.LegacyTest")
+    }
+
+    mojo.runScalaTest(mojo.configuration()) should be (true)
+    mojo.forkedRuns should have length 3
+    mojo.forkedRuns(0) should containSlice("-s", "org.example.FirstSuite")
+    mojo.forkedRuns(1) should containSlice("-s", "org.example.SecondSuite", "-t", "focused test")
+    mojo.forkedRuns(2) should containSlice("-j", "org.example.LegacyTest")
+    mojo.forkedRuns.foreach { run =>
+      run should containCompoundArgs("-R", outputDirectory, testOutputDirectory)
+    }
+  }
+
+  def testForkModeAlwaysRejectsDiscoverySelectors {
+    val mojo = new RecordingTestMojo
+    configureForRun(mojo) { m =>
+      m.forkMode = "always"
+      m.membersOnlySuites = comma("org.example")
+      m.suites = comma("org.example.FirstSuite")
+    }
+
+    val caught = intercept[org.apache.maven.plugin.MojoFailureException] {
+      mojo.runScalaTest(mojo.configuration())
+    }
+
+    caught.getMessage should include ("supports only explicit suites and JUnit classes")
+  }
+
+  def testForkModeAlwaysRequiresExplicitExecutionUnits {
+    val mojo = new RecordingTestMojo
+    configureForRun(mojo)(_.forkMode = "always")
+
+    val caught = intercept[org.apache.maven.plugin.MojoFailureException] {
+      mojo.runScalaTest(mojo.configuration())
+    }
+
+    caught.getMessage should include ("requires at least one explicit suite or JUnit class")
+  }
+
+  def testForkModeAlwaysRejectsRedirectedOutput {
+    val mojo = new RecordingTestMojo
+    configureForRun(mojo) { m =>
+      m.forkMode = "always"
+      m.redirectTestOutputToFile = true
+      m.suites = comma("org.example.FirstSuite")
+    }
+
+    val caught = intercept[org.apache.maven.plugin.MojoFailureException] {
+      mojo.runScalaTest(mojo.configuration())
+    }
+
+    caught.getMessage should include ("redirectTestOutputToFile is not supported")
+  }
+
+  def testInvalidForkModeFallsBackToForkOnce {
+    val mojo = new RecordingTestMojo
+    configureForRun(mojo) { m =>
+      m.forkMode = "bogus"
+      m.suites = comma("org.example.FirstSuite", "org.example.SecondSuite")
+    }
+
+    mojo.runScalaTest(mojo.configuration()) should be (true)
+    mojo.forkedRuns should have length 1
+    mojo.forkedRuns.head should containSlice("-s", "org.example.FirstSuite")
+    mojo.forkedRuns.head should containSlice("-s", "org.example.SecondSuite")
   }
 
   def testStdErrReporter {
@@ -265,5 +352,14 @@ final class PluginTest
     MojoUtils.stripNewLines("-XmsXg\r-XmxYg") should be("-XmsXg -XmxYg")
     MojoUtils.stripNewLines("-XmsXg\r\n-XmxYg -XX:MaxPermSize=Zm") should be("-XmsXg -XmxYg -XX:MaxPermSize=Zm")
     MojoUtils.stripNewLines("-XmsXg\r\n-XmxYg") should be("-XmsXg -XmxYg")
+  }
+
+  private class RecordingTestMojo extends TestMojo {
+    val forkedRuns = scala.collection.mutable.ArrayBuffer.empty[Array[String]]
+
+    override protected def runForkedProcess(args: Array[String]): Boolean = {
+      forkedRuns += args
+      true
+    }
   }
 }

@@ -194,6 +194,7 @@
           <projectsDirectory>src/it</projectsDirectory>
           <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
           <pomIncludes>
+            <pomInclude>fork-always/pom.xml</pomInclude>
             <pomInclude>lift/pom.xml</pomInclude>
             <pomInclude>spaces in path/pom.xml</pomInclude>
             <pomInclude>redirect-output/pom.xml</pomInclude>
