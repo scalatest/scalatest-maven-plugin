@@ -1,6 +1,6 @@
 package org.scalatest.tools.maven;
 
-import org.codehaus.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
@@ -70,7 +70,7 @@ public class ReporterMojo extends AbstractScalaTestMojo implements MavenReport {
             sink.sectionTitle1();
             sink.text(getLocalizedString(locale, "reporter.mojo.outputTitle"));
             sink.sectionTitle1_();
-            sink.verbatim(false);
+            sink.verbatim();
             sink.text(getScalaTestOutputFromFile());
             sink.verbatim_();
             sink.body_();
